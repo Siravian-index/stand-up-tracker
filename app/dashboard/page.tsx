@@ -1,5 +1,6 @@
 "use client"
 
+import { Flex, Title } from "@mantine/core";
 import Countdown from "./components/Countdown"
 import ParticipantList from "./components/participants/ParticipantList";
 import ParticipantEntity from "./components/participants/schema/participant.entity";
@@ -12,11 +13,17 @@ const Dashboard = () => {
 
   const names = ["Edward", "John", "Carlos", "Luisa", "Test"]
 
-  const participants = names.map((name, i) => new ParticipantEntity({name, id: String(i), hasParticipated: i % 2 === 0}))
+  const participants = names.map((name, i) => new ParticipantEntity({ name, id: String(i), hasParticipated: i % 2 === 0 }))
 
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Dashboard</h1>
+      <Flex
+        gap="sm"
+        justify="center"
+        align="center"
+      >
+        <Title>Dashboard</Title >
+      </Flex>
       <Countdown settings={{ expiryTimestamp: time, onExpire, autoStart: false }} />
 
       <ParticipantList participants={participants} />

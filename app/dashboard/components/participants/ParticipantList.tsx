@@ -1,4 +1,4 @@
-import { Flex } from "@mantine/core"
+import { Flex, Title } from "@mantine/core"
 import Participant from "./Participant"
 import ParticipantEntity from "./schema/participant.entity"
 import { useState } from "react"
@@ -26,17 +26,17 @@ const ParticipantList = ({ participants: list }: Props) => {
         direction="column"
         wrap="wrap"
       >
-        <h3>Participants</h3>
+        <Title order={3}>Participants</Title>
 
 
-        <h3>Pending</h3>
+        <Title order={3}>Pending</Title>
 
         {participants.filter((p) => !p.hasParticipated).map((p) => {
 
           return <Participant key={p.id} participant={p} toggleParticipation={toggleParticipation} />
         })}
 
-        <h3>Already participated</h3>
+        <Title order={3}>Already participated</Title>
         {participants.filter((p) => p.hasParticipated).map((p) => {
 
           return <Participant key={p.id} participant={p} toggleParticipation={toggleParticipation} />
