@@ -26,6 +26,8 @@ const GeneralSetting = () => {
   const handleSubmit = (values: FormValues) => {
     const names = values.names.split(",").map((n) => n.trim()).filter((n) => n)
     setParticipants((prev) => [...prev, ...names])
+    form.reset()
+
   }
 
   const removeFromList = (id: string ) => {
