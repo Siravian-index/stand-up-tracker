@@ -21,19 +21,24 @@ const Countdown = ({ settings }: Props) => {
     restart,
   } = useTimer(settings)
 
+
+  const addPad = (number: number) => {
+    const MIN = 10
+    return number < MIN ? `0${number}` : number
+  }
+
+  const handleToggle = isRunning ? pause : start
+  const text = isRunning ? "Pause" : "Start"
   return (
     <div style={{ textAlign: 'center' }}>
       <div style={{ fontSize: '100px' }}>
-        <span>{days}</span>:<span>{hours}</span>:<span>{minutes}</span>:<span>{String(seconds).padEnd(2, "0")}</span>
+        <span>{addPad(minutes)}</span>:<span>{addPad(seconds)}</span>
       </div>
       <p>{isRunning ? 'Running' : 'Not running'}</p>
-      <button onClick={start}>Start</button>
-      <button onClick={pause}>Pause</button>
-      <button onClick={resume}>Resume</button>
+      <button onClick={handleToggle}>{text}</button>
       <button onClick={() => {
-        // Restarts to 5 minutes timer
         const time = new Date();
-        time.setSeconds(time.getSeconds() + 300);
+        time.setSeconds(time.getSeconds() + 90);
         restart(time)
       }}>Restart</button>
     </div>

@@ -4,29 +4,32 @@ import { Flex, Title } from "@mantine/core";
 import Countdown from "./components/Countdown"
 import ParticipantList from "./components/participants/ParticipantList";
 import ParticipantEntity from "./components/participants/schema/participant.entity";
+import { useLocalStorage } from "@mantine/hooks";
 
 const Dashboard = () => {
+  const [names, setNames] = useLocalStorage<string[]>({ key: "participants", defaultValue: [] })
+
+  
   const time = new Date();
-  time.setSeconds(time.getSeconds() + 600); // 10 minutes timer
+  time.setSeconds(time.getSeconds() + 90)
 
   const onExpire = () => console.warn('onExpire called')
-
-  const names = ["Edward", "John", "Carlos", "Luisa", "Test"]
-
-  const participants = names.map((name, i) => new ParticipantEntity({ name, id: String(i), hasParticipated: i % 2 === 0 }))
-
+  
+  const participants = names?.map((name, i) => new ParticipantEntity({ name, id: String(i), hasParticipated: i % 2 === 0 }))
   return (
     <>
       <Flex
         gap="sm"
         justify="center"
         align="center"
+        direction="column"
       >
         <Title>Dashboard</Title >
+
       </Flex>
       <Countdown settings={{ expiryTimestamp: time, onExpire, autoStart: false }} />
 
-      <ParticipantList participants={participants} />
+      <ParticipantList participants={participants || []} />
     </>
   )
 }
