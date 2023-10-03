@@ -17,7 +17,7 @@ const Dashboard = () => {
         align="center"
         direction="column"
       >
-        <Title>Dashboard</Title >
+        <Title>Daily Stand-up</Title >
 
       </Flex>
       <Countdown settings={{ expiryTimestamp: time, autoStart: false }} />
