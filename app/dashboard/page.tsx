@@ -7,15 +7,15 @@ import ParticipantEntity from "./components/participants/schema/participant.enti
 import { useLocalStorage } from "@mantine/hooks";
 
 const Dashboard = () => {
-  const [names, setNames] = useLocalStorage<string[]>({ key: "participants", defaultValue: [] })
-
+  // const [names, setNames] = useLocalStorage<string[]>({ key: "participants", defaultValue: [] })
+  const names: string[] = JSON.parse(localStorage.getItem("participants") || "") || []
   
   const time = new Date();
   time.setSeconds(time.getSeconds() + 90)
 
   const onExpire = () => console.warn('onExpire called')
   
-  const participants = names?.map((name, i) => new ParticipantEntity({ name, id: String(i), hasParticipated: i % 2 === 0 }))
+  const participants = names.map((name, i) => new ParticipantEntity({ name, id: String(i), hasParticipated: false}))
   return (
     <>
       <Flex
