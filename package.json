@@ -14,6 +14,7 @@
     "@mantine/hooks": "^7.1.2",
     "@tabler/icons-react": "^2.38.0",
     "next": "latest",
+    "next-auth": "^4.23.2",
     "react": "latest",
     "react-dom": "latest",
     "react-timer-hook": "^3.0.7"
