@@ -4,7 +4,7 @@ const SignIn = () => {
 
 
   return (
-    <div> sign in component</div>
+    <div> sign in compo</div>
   )
 
 }
