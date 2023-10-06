@@ -7,7 +7,6 @@ const Home = () => {
 
   // add some logo or landing page later
   // then a Link to the sign in form
-
   const signInPageURL = "/auth/login"
   return (
     <>
