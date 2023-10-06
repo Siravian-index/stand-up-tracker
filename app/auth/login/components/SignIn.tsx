@@ -2,17 +2,16 @@
 
 import { signIn } from "next-auth/react"
 import { FormEvent } from "react"
-import GoogleButton from "react-google-button"
 
 
 const SignInForm = () => {
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const homePage = "/home/daily"
     e.preventDefault()
     try {
       await signIn("google", {
         redirect: false,
-        callbackUrl: "/home/daily"
+        callbackUrl: homePage
       })
     } catch (error) {
       console.error("Failed when trying to log in with google")
@@ -22,7 +21,7 @@ const SignInForm = () => {
   return (
     <section>
       <form onSubmit={handleSubmit}>
-        <GoogleButton />
+        <button>Sign in with google</button>
       </form>
     </section>
   )
