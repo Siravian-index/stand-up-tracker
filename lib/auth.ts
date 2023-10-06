@@ -14,12 +14,8 @@ export const authConfig: AuthOptions = {
   ]
 }
 
-export const useValidateServerAuth = async () => {
-  const session = await getServerSession(authConfig)
-  if (!session) {
-    console.log(session)
-    redirect("/")
-  }
+export const useServerAuthSession = () => {
+  return getServerSession(authConfig)
 }
 
 export const useValidateClientAuth = () => {
