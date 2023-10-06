@@ -14,20 +14,21 @@ export const authConfig: AuthOptions = {
   ]
 }
 
-export const useServerAuth = async () => {
+export const useValidateServerAuth = async () => {
   const session = await getServerSession(authConfig)
   if (!session) {
+    console.log(session)
     redirect("/")
   }
 }
 
-export const useClientAuth = () => {
-  if (typeof window !== "undefined") {
-    const session = useSession()
-    const router = useRouter()
-    debugger
-    if (session.status === "unauthenticated") {
-      router.push("/")
-    }
+export const useValidateClientAuth = () => {
+  if (typeof window === "undefined") {
+    return
+  }
+  const session = useSession()
+  const router = useRouter()
+  if (session.status === "unauthenticated") {
+    router.push("/")
   }
 }

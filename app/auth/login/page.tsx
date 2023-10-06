@@ -4,7 +4,6 @@ import SignInForm from "./components/SignIn"
 
 const LoginPage = () => {
 
-
   return (
     <>
       <Title>Login</Title>

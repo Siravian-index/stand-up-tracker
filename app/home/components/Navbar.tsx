@@ -5,8 +5,11 @@ import { ActionIcon } from '@mantine/core';
 import Link from 'next/link';
 import { IconPhoto, IconSettings } from '@tabler/icons-react';
 import { signOut } from 'next-auth/react';
+import { useValidateClientAuth } from '@/lib/auth';
 
 const Navbar = () => {
+  useValidateClientAuth()
+
   const handleSignOut = async () => {
     const rootPage = "/"
     try {
