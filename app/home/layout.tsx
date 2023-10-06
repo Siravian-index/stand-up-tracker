@@ -1,7 +1,6 @@
 
-"use client"
 
-import { SessionProvider } from 'next-auth/react';
+import { useServerAuthSession } from '@/lib/auth';
 import Navbar from './components/Navbar';
 
 
@@ -10,13 +9,11 @@ interface Props {
 }
 
 const HomeLayout = ({ children }: Props) => {
-
+  // useServerAuthSession()
   return (
     <>
-      <SessionProvider>
-        <Navbar />
-        {children}
-      </SessionProvider>
+      <Navbar />
+      {children}
     </>
   )
 }
