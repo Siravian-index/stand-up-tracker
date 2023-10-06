@@ -20,7 +20,7 @@ const Dashboard = () => {
         <Title>Daily Stand-up</Title >
 
       </Flex>
-      <Countdown settings={{ expiryTimestamp: time, autoStart: false }} />
+      {/* <Countdown settings={{ expiryTimestamp: time, autoStart: false }} /> */}
 
       <ParticipantList />
     </>
