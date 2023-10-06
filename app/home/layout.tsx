@@ -1,6 +1,6 @@
 
 
-import { useServerAuthSession } from '@/lib/auth';
+import { validateAuthSessionServer } from '@/lib/auth';
 import Navbar from './components/Navbar';
 
 
@@ -8,8 +8,8 @@ interface Props {
   children: React.ReactNode
 }
 
-const HomeLayout = ({ children }: Props) => {
-  // useServerAuthSession()
+const HomeLayout = async ({ children }: Props) => {
+  await validateAuthSessionServer({redirectTo: "/"})
   return (
     <>
       <Navbar />
