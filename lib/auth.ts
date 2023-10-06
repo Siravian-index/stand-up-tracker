@@ -24,13 +24,13 @@ export const validateAuthSessionServer = async ({ isSessionRequired = true, redi
   }
 }
 
-const useValidateClientAuth = () => {
-  if (typeof window === "undefined") {
-    return
-  }
-  const session = useSession()
-  const router = useRouter()
-  if (session.status === "unauthenticated") {
-    router.push("/")
-  }
-}
+// const useValidateClientAuth = () => {
+//   if (typeof window === "undefined") {
+//     return
+//   }
+//   const session = useSession()
+//   const router = useRouter()
+//   if (session.status === "unauthenticated") {
+//     router.push("/")
+//   }
+// }
