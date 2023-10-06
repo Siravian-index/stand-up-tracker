@@ -1,18 +1,16 @@
+import { validateAuthSessionServer } from "@/lib/auth"
 import React from "react"
 
 interface Props {
   children: React.ReactNode
 }
 
-const AuthLayout = ({children}: Props) => {
+const AuthLayout = async ({ children }: Props) => {
 
-
+  await validateAuthSessionServer({ isSessionRequired: false, redirectTo: "/home/daily" })
 
   return (
     <>
-      <nav>
-        <span>test</span>
-      </nav>
       {children}
     </>
   )

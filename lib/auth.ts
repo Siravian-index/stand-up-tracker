@@ -14,11 +14,17 @@ export const authConfig: AuthOptions = {
   ]
 }
 
-export const useServerAuthSession = () => {
-  return getServerSession(authConfig)
+export const validateAuthSessionServer = async ({ isSessionRequired = true, redirectTo: path }: { isSessionRequired?: boolean, redirectTo: string }) => {
+  const session = await getServerSession(authConfig)
+  if (isSessionRequired && !session) {
+    redirect(path)
+  }
+  if (!isSessionRequired && session) {
+    redirect(path)
+  }
 }
 
-export const useValidateClientAuth = () => {
+const useValidateClientAuth = () => {
   if (typeof window === "undefined") {
     return
   }
