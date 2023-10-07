@@ -12,15 +12,31 @@ datasource db {
 }
 
 model User {
-  email String @id
+  email          String          @id
+  configurations Configuration[]
+}
+
+model Configuration {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  Timebox      Timebox       @relation(fields: [timeboxId], references: [id])
+  participants Participant[]
+  User         User          @relation(fields: [userEmail], references: [email])
+  userEmail    String
+  timeboxId    String
 }
 
 model Participant {
-  id                String   @id @default(uuid())
-  name              String
-  hasParticipated   Boolean
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  participantListId String?
-  configurationId   String?
+  id              String        @id @default(uuid())
+  name            String
+  hasParticipated Boolean
+  Configuration   Configuration @relation(fields: [configurationId], references: [id])
+  configurationId String
+}
+
+model Timebox {
+  id            String          @id @default(uuid())
+  value         Int
+  Configuration Configuration[]
 }
