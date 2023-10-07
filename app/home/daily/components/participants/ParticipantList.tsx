@@ -1,14 +1,17 @@
+"use client"
+
 import { Flex, Title } from "@mantine/core"
 import Participant from "./Participant"
-import { IParticipant } from "@/schema/participant"
+import { ParticipantType } from "@/schema/participant"
 
 
 interface Props {
 }
 
 const ParticipantList = ({ }: Props) => {
-  const participants: IParticipant[] = []
+  const participants: ParticipantType[] = [{name: "test", id: "1", hasParticipated: false}]
   const toggleParticipation = (id: string) => {
+
   }
 
 

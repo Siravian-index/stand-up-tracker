@@ -41,8 +41,8 @@ const GeneralSetting = () => {
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
             label="Participants"
-            description="Enter a comma separated list of names. i.e. Maria, Juan, Jose"
-            placeholder="Input placeholder"
+            description="Enter a comma separated list of names. "
+            placeholder="i.e. Maria, Juan, Jose"
             {...form.getInputProps('names')}
           />
         </form>
