@@ -18,7 +18,8 @@
     "next-auth": "^4.23.2",
     "react": "latest",
     "react-dom": "latest",
-    "react-timer-hook": "^3.0.7"
+    "react-timer-hook": "^3.0.7",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "latest",
