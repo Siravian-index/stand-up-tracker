@@ -1,8 +1,8 @@
 -- CreateTable
 CREATE TABLE "User" (
     "email" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "url" TEXT
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("email")
 );
 
 -- CreateTable
@@ -15,6 +15,3 @@ CREATE TABLE "Participant" (
 
     CONSTRAINT "Participant_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");

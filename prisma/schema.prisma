@@ -12,7 +12,7 @@ datasource db {
 }
 
 model User {
-  email String @unique
+  email String @id
 }
 
 model Participant {
