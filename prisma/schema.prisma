@@ -7,12 +7,12 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_URL") // uses connection pooling
-  // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url       = env("DATABASE_URL") // uses connection pooling
+  directUrl = env("DIRECT_URL") // uses a direct connection
 }
 
 model User {
-  email    String   @id @unique
+  email    String    @id @unique
   settings Settings?
 }
 
@@ -49,5 +49,5 @@ model Timebox {
   id         String   @id @default(uuid())
   time       Int
   template   Template @relation(fields: [templateId], references: [id])
-  templateId String @unique
+  templateId String   @unique
 }
