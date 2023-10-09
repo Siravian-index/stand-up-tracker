@@ -12,17 +12,17 @@ datasource db {
 }
 
 model User {
-  email      String   @id
-  settingsId String
-  settings   Settings @relation(fields: [settingsId], references: [id])
+  email    String   @id @unique
+  settings Settings?
 }
 
 model Settings {
   id        String     @id @default(uuid())
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  User      User[]
   Template  Template[]
+  user      User       @relation(fields: [userEmail], references: [email])
+  userEmail String     @unique
 }
 
 model Template {
