@@ -40,7 +40,6 @@ model Participant {
   id              String   @id @default(uuid())
   name            String
   hasParticipated Boolean
-  configurationId String
   template        Template @relation(fields: [templateId], references: [id])
   templateId      String
 }
