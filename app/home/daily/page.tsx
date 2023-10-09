@@ -5,9 +5,6 @@ import ParticipantList from "./components/participants/ParticipantList";
 
 const Dashboard = () => {
 
-  const time = new Date();
-  time.setSeconds(time.getSeconds() + 90)
-
 
   return (
     <>
@@ -20,7 +17,7 @@ const Dashboard = () => {
         <Title>Daily Stand-up</Title >
 
       </Flex>
-      {/* <Countdown settings={{ expiryTimestamp: time, autoStart: false }} /> */}
+      <Countdown />
 
       <ParticipantList />
     </>
