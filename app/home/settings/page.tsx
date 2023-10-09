@@ -1,9 +1,7 @@
 import { Flex, Title } from "@mantine/core"
-import GeneralSetting from "./components/general/GeneralSettings"
 
-
+import SettingsTabs from "./components/SettingsTabs";
 const Settings = () => {
-
   return (
     <>
       <Flex
@@ -14,8 +12,7 @@ const Settings = () => {
         <Title>Settings</Title >
       </Flex>
 
-    <GeneralSetting/>
-
+      <SettingsTabs />
     </>
   )
 }
