@@ -9,7 +9,7 @@ interface Props {
 
 const Countdown = ({ }: Props) => {
 
-  const generateTimer = (seconds = 11) => {
+  const generateTimer = (seconds = 90) => {
     const time = new Date();
     time.setSeconds(time.getSeconds() + seconds)
     return time
