@@ -1,7 +1,6 @@
 import { AuthOptions, getServerSession } from "next-auth";
 import GoogleProvider from 'next-auth/providers/google';
-import { useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 
 
@@ -22,6 +21,10 @@ export const validateAuthSessionServer = async ({ isSessionRequired = true, redi
   if (!isSessionRequired && session) {
     redirect(path)
   }
+}
+
+export const useServerSession = () => {
+  return getServerSession(authConfig)
 }
 
 // const useValidateClientAuth = () => {
