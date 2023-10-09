@@ -1,33 +1,20 @@
 "use client"
+
 import { Flex, Title } from "@mantine/core"
 import Participant from "./Participant"
-import ParticipantEntity from "./schema/participant.entity"
-import { useEffect, useState } from "react"
+import { ParticipantType } from "@/schema/participant"
 
 
 interface Props {
 }
 
 const ParticipantList = ({ }: Props) => {
-
-  const [participants, setParticipants] = useState<ParticipantEntity[]>([])
-
+  const participants: ParticipantType[] = [{name: "test", id: "1", hasParticipated: false}]
   const toggleParticipation = (id: string) => {
-    setParticipants((prev) => prev.map((p) => p.id === id ? p.toggleParticipation() : p))
+
   }
 
-  useEffect(() => {
-    const key = localStorage.getItem("participants")
-    if (!key) {
-      return
-    }
-    const value = JSON.parse(key)
-    if (Array.isArray(value)) {
-      const participants = value.map((name, i) => new ParticipantEntity({ name, id: String(i), hasParticipated: false }))
-      setParticipants(participants)
-    }
 
-  }, [])
 
   return (
     <>

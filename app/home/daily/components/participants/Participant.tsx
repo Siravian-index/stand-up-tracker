@@ -1,7 +1,7 @@
-import ParticipantEntity from "./schema/participant.entity"
+import { ParticipantType } from "@/schema/participant"
 
 interface Props {
-  participant: ParticipantEntity
+  participant: ParticipantType
   toggleParticipation: (id: string) => void
 }
 
