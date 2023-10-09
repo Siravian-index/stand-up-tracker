@@ -21,6 +21,8 @@ model Settings {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   Template  Template[]
+  // activeTemplate
+  // templateid
   user      User       @relation(fields: [userEmail], references: [email])
   userEmail String     @unique
 }
