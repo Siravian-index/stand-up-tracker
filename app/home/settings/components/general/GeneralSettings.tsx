@@ -1,21 +1,22 @@
 
-"use client"
 import { Select, Text } from "@mantine/core"
 import TemplateForm from "./TemplateForm"
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Button } from '@mantine/core';
 
+interface Props {
 
+}
 
 
 const MAX_TEMPLATES_LIMIT = 3
-const GeneralSetting = () => {
+const GeneralSetting = ({}: Props) => {
   const [opened, { open, close }] = useDisclosure(false);
 
   const templates = ["Template One", "Template Two"]
   const currentTemplates = templates.length
   const canCreateTemplate = currentTemplates < MAX_TEMPLATES_LIMIT
-  
+
   return (
     <>
       <Select
