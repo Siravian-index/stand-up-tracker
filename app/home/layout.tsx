@@ -13,15 +13,11 @@ interface Props {
 const validationCallback = async (session: Session) => {
   try {
     const email = session.user?.email ?? ""
-    const user = await prisma.user.findUnique({ where: { email } })
-    console.log({user})
-    if (!user) {
+    // const user = await prisma.user.findUnique({ where: { email } })
+    if (!email) {
       const defaultTemplates = [{ name: "Default Template 1" }, { name: "Default Template 2" }, { name: "Default Template 3" }]
       await prisma.user.create({ data: { email, settings: { create: { Template: { createMany: { data: defaultTemplates } } } } } })
     }
-    const res = await prisma.template.findMany()
-    console.log({res})
-
   } catch (error) {
     console.log(error)
     console.error("Failed prisma fetch on validationCallback")
