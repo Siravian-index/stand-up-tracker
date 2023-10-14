@@ -25,7 +25,7 @@ const getTemplates = async () => {
 // this will be the server component
 const GeneralSettingsTab = async () => {
     console.log('GeneralSettingsTab')
-    await getTemplates()
+    // await getTemplates()
 
     return (
         <>
