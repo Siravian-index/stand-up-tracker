@@ -13,8 +13,8 @@ interface Props {
 const validationCallback = async (session: Session) => {
   try {
     const email = session.user?.email ?? ""
-    // const user = await prisma.user.findUnique({ where: { email } })
-    if (!email) {
+    const user = await prisma.user.findUnique({ where: { email } })
+    if (!user) {
       const defaultTemplates = [{ name: "Default Template 1" }, { name: "Default Template 2" }, { name: "Default Template 3" }]
       await prisma.user.create({ data: { email, settings: { create: { Template: { createMany: { data: defaultTemplates } } } } } })
     }

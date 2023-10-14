@@ -8,7 +8,7 @@ const SettingsTabs = () => {
     const iconStyle = { width: "0.75rem", height: "0.75rem" };
 
     return (
-        <Tabs orientation="vertical" defaultValue="general">
+        <Tabs orientation="horizontal" defaultValue="general">
             <Tabs.List>
                 <Tabs.Tab value="general" leftSection={<IconSettings style={iconStyle} />}>
                     General
