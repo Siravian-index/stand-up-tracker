@@ -1,26 +1,9 @@
 import prisma from "@/db/prismaClient"
 import GeneralSetting from "./GeneralSettings"
 import { useServerSession } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import { TemplateType, templateListSchema } from "@/schema/template"
 
 
-const getTemplates = async () => {
-    try {
-        const session = await useServerSession()
-        console.log({ session })
-
-        if (!session?.user?.email) {
-            redirect('/')
-        }
-        const email = session.user.email
-        const res = await prisma.settings.findMany({ where: { userEmail: email }, include: {Template: {}} })
-        console.log(JSON.stringify(res, null, 4))
-
-    } catch (error) {
-        console.error(error)
-        return []
-    }
-}
 
 // this will be the server component
 const GeneralSettingsTab = async () => {
