@@ -29,17 +29,18 @@ export const getTemplates = async () => {
     try {
         const [err, email] = await getSession()
         if (err) {
-            // throw err
-            return [err, null] as const
+            throw err
         }
         const [prismaErr, settings] = await getSettings(email)
         if (prismaErr) {
-            return [prismaErr, null] as const
+            throw prismaErr
         }
-        return [null, settings.Template] as const
+        return settings.Template
     } catch (error) {
         console.error(error)
-        const err = new UnknownError()
-        return [err, null] as const
+        // check instance of error
+        throw new UnknownError()
     }
 }
+
+const result = {success: true, data: [], error: null}
