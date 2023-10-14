@@ -2,15 +2,14 @@ import { ParticipantType } from "@/schema/participant"
 
 interface Props {
   participant: ParticipantType
-  toggleParticipation: (id: string) => void
 }
 
-const Participant = ({participant, toggleParticipation}: Props) => {
+const Participant = ({ participant, }: Props) => {
 
   return (
     <div>
       <span onClick={() => {
-        toggleParticipation(participant.id)
+        // toggleParticipation(participant.id)
       }}>{participant.name}</span>
     </div>
   )

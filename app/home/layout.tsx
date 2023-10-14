@@ -11,17 +11,31 @@ interface Props {
 }
 
 const validationCallback = async (session: Session) => {
-  try {
-    const email = session.user?.email ?? ""
-    const user = await prisma.user.findUnique({ where: { email } })
-    if (!user) {
-      const defaultTemplates = [{ name: "Default Template 1" }, { name: "Default Template 2" }, { name: "Default Template 3" }]
-      await prisma.user.create({ data: { email, settings: { create: { Template: { createMany: { data: defaultTemplates } } } } } })
-    }
-  } catch (error) {
-    console.log(error)
-    console.error("Failed prisma fetch on validationCallback")
-  }
+  // try {
+  //   const email = session.user?.email
+  //   if (!email) {
+  //     throw new Error("Email not found in session obj");
+
+  //   }
+  //   const defaultTemplates = [{ name: "Default Template 1" }, { name: "Default Template 2" }, { name: "Default Template 3" }]
+
+  //   const upsertUser = await prisma.user.upsert({
+  //     include: {
+  //       settings: { include: { Template: {}} }
+  //     },
+  //     where: {
+  //       email
+  //     },
+  //     update: {},
+  //     create: {
+  //       email,
+  //       settings: { create: { Template: { createMany: { data: defaultTemplates } } } }
+  //     },
+  //   })
+  // } catch (error) {
+  //   console.log(error)
+  //   console.error("Failed prisma fetch on validationCallback")
+  // }
 
 }
 

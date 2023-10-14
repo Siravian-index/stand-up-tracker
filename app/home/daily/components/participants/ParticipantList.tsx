@@ -1,4 +1,3 @@
-"use client"
 
 import { Flex, Title } from "@mantine/core"
 import Participant from "./Participant"
@@ -9,10 +8,7 @@ interface Props {
 }
 
 const ParticipantList = ({ }: Props) => {
-  const participants: ParticipantType[] = [{name: "test", id: "1", hasParticipated: false}]
-  const toggleParticipation = (id: string) => {
-
-  }
+  const participants: ParticipantType[] = []
 
 
 
@@ -33,13 +29,13 @@ const ParticipantList = ({ }: Props) => {
 
         {participants.filter((p) => !p.hasParticipated).map((p) => {
 
-          return <Participant key={p.id} participant={p} toggleParticipation={toggleParticipation} />
+          return <Participant key={p.id} participant={p} />
         })}
 
         <Title order={3}>Already participated</Title>
         {participants.filter((p) => p.hasParticipated).map((p) => {
 
-          return <Participant key={p.id} participant={p} toggleParticipation={toggleParticipation} />
+          return <Participant key={p.id} participant={p} />
         })}
       </Flex>
     </>
