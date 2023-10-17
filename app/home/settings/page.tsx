@@ -1,7 +1,10 @@
 import { Flex, Title } from "@mantine/core"
 
 import SettingsTabs from "./components/SettingsTabs";
-const Settings = () => {
+import GeneralSettingsTab from "./components/general/GeneralSettingsTab";
+import { getTemplates } from "@/db/query";
+const Settings = async () => {
+  const tuple = await getTemplates()
   return (
     <>
       <Flex
@@ -12,7 +15,9 @@ const Settings = () => {
         <Title>Settings</Title >
       </Flex>
 
-      <SettingsTabs />
+      <SettingsTabs 
+        settingsTab={<GeneralSettingsTab tuple={tuple}/>}
+      />        
     </>
   )
 }

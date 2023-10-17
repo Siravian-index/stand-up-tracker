@@ -2,9 +2,12 @@
 
 import { Tabs } from '@mantine/core';
 import { IconPhoto, IconMessageCircle, IconSettings } from '@tabler/icons-react';
-import GeneralSettingsTab from './general/GeneralSettingsTab';
 
-const SettingsTabs = () => {
+interface Props {
+    settingsTab: React.ReactNode
+}
+
+const SettingsTabs = ({ settingsTab }: Props) => {
     const iconStyle = { width: "0.75rem", height: "0.75rem" };
 
     return (
@@ -23,7 +26,8 @@ const SettingsTabs = () => {
             </Tabs.List>
 
             <Tabs.Panel value="general">
-                <GeneralSettingsTab />
+                {/* <GeneralSettingsTab /> */}
+                {settingsTab}
             </Tabs.Panel>
 
             <Tabs.Panel value="todo">

@@ -5,7 +5,7 @@ import { SessionError } from "@/lib/errors/SessionError"
 import { UnknownError } from "@/lib/errors/UnknownError"
 import { TemplateType } from "@/schema/template"
 
-const getSession = async () => {
+export const getSessionEmail = async () => {
     const session = await useServerSession()
     const email = session?.user?.email
     if (!email) {
@@ -35,7 +35,7 @@ const getTemplate = async (id: string) => {
 
 export const getTemplates = async (): Promise<readonly [null, TemplateType[]] | readonly [string, null]> => {
     try {
-        const [err, email] = await getSession()
+        const [err, email] = await getSessionEmail()
         if (err) {
             throw err
         }
@@ -62,7 +62,7 @@ export const getTemplates = async (): Promise<readonly [null, TemplateType[]] | 
 export const getTemplateById = async (id: string) => {
 
     try {
-        const [err] = await getSession()
+        const [err] = await getSessionEmail()
         if (err) {
             throw err
         }

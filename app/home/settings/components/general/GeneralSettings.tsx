@@ -1,30 +1,42 @@
+"use client"
 
 import { Box, Select } from "@mantine/core"
 import TemplateForm from "./TemplateForm"
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Button } from '@mantine/core';
+import { TemplateType } from "@/schema/template";
 
 interface Props {
-
+  templates: TemplateType[]
 }
 
 
 const MAX_TEMPLATES_LIMIT = 3
-const GeneralSetting = ({ }: Props) => {
+const GeneralSetting = ({ templates }: Props) => {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const templates = [{ label: "Template One", value: "1" }, { label: "Template Two", value: "2" }]
+  const handleEditTemplate = () => {
+
+  }
+
+  const templatesData = templates.map((t) => ({ label: t.name, value: t.id }))
+
   const currentTemplates = templates.length
   const canCreateTemplate = currentTemplates < MAX_TEMPLATES_LIMIT
+  const hasContent = Boolean(currentTemplates)
 
   return (
     <Box maw={500}>
+      {
+        hasContent &&
+        <Select
+          label="Current Template"
+          placeholder="Pick a template"
+          data={templatesData}
+        />
+      }
+      <Button onClick={handleEditTemplate}>Edit current template</Button>
 
-      <Select
-        label="Current Template"
-        placeholder="Pick a template"
-        data={templates}
-      />
 
       <>
         <Modal opened={opened} onClose={close} title="Create new Template">

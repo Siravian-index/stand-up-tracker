@@ -1,18 +1,22 @@
-import prisma from "@/db/prismaClient"
+import { getTemplates } from "@/db/query"
 import GeneralSetting from "./GeneralSettings"
-import { useServerSession } from "@/lib/auth"
-import { TemplateType, templateListSchema } from "@/schema/template"
+import ErrorMessage from "@/app/home/components/ErrorMessage"
 
 
+interface Props {
+    tuple: Awaited<ReturnType<typeof getTemplates>>
+}
 
-// this will be the server component
-const GeneralSettingsTab = async () => {
-    console.log('GeneralSettingsTab')
-    // await getTemplates()
+const GeneralSettingsTab = ({ tuple }: Props) => {
+    const [error, templates] = tuple
+
+    if (error) {
+        return <ErrorMessage error={error} />
+    }
 
     return (
         <>
-            <GeneralSetting />
+            <GeneralSetting templates={templates ?? []} />
         </>
     )
 }

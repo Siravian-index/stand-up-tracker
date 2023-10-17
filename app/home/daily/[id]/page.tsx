@@ -3,6 +3,7 @@ import { getTemplateById } from "@/db/query";
 import { Flex, Title } from "@mantine/core";
 import Link from "next/link";
 import ParticipantList from "../components/participants/ParticipantList";
+import ErrorMessage from "../../components/ErrorMessage";
 
 interface Params {
     id: string
@@ -16,11 +17,7 @@ const DynamicDashboardPage = async ({ params }: Props) => {
     const [error, template] = await getTemplateById(params.id)
 
     if (error) {
-        return (
-            <div>
-                <p>{error}</p>
-            </div>
-        )
+        return <ErrorMessage error={error}/>
     }
 
     return (
