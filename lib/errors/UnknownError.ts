@@ -1,6 +1,6 @@
 
 export class UnknownError extends Error {
-    constructor (message = "Unknown error happened, try again later.") {
+    constructor (message = "Sorry, something went wrong. Please try again later.") {
         super(message)
     }
 }

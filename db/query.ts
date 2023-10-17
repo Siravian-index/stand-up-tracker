@@ -4,6 +4,8 @@ import { PrismaResourceNotFound } from "@/lib/errors/PrismaErrors"
 import { SessionError } from "@/lib/errors/SessionError"
 import { UnknownError } from "@/lib/errors/UnknownError"
 import { TemplateType } from "@/schema/template"
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
+import { redirect } from "next/navigation"
 
 export const getSessionEmail = async () => {
     const session = await useServerSession()
@@ -33,7 +35,7 @@ const getTemplate = async (id: string) => {
     return [null, template] as const
 }
 
-export const getTemplates = async (): Promise<readonly [null, TemplateType[]] | readonly [string, null]> => {
+export const getTemplates = async () => {
     try {
         const [err, email] = await getSessionEmail()
         if (err) {
@@ -45,16 +47,7 @@ export const getTemplates = async (): Promise<readonly [null, TemplateType[]] | 
         }
         return [null, settings.Template] as const
     } catch (error) {
-        console.error(error)
-        if (error instanceof SessionError) {
-            return [error.message, null] as const
-        }
-        if (error instanceof PrismaResourceNotFound) {
-            return [error.message, null] as const
-        }
-        const msg = "Unknown error happened while getting templates, please try again later."
-        const unknownError = new UnknownError(msg)
-        return [unknownError.message, null] as const
+        validateErrorOrRedirect(error)
     }
 }
 
@@ -72,18 +65,22 @@ export const getTemplateById = async (id: string) => {
         }
         return [null, template] as const
     } catch (error) {
-        console.error(error)
-        if (error instanceof SessionError) {
-            // TODO: kick user to login page
-            return [error.message, null] as const
-        }
-        if (error instanceof PrismaResourceNotFound) {
-            return [error.message, null] as const
-        }
-        const msg = "Unknown error happened while getting templates' data, please try again later."
-        const unknownError = new UnknownError(msg)
-        return [unknownError.message, null] as const
+        validateErrorOrRedirect(error)
     }
 }
 
-// const result = { success: true, data: [], error: null }
+const validateErrorOrRedirect = (error: unknown) => {
+    console.error(error)
+    if (error instanceof SessionError) {
+        redirect("/")
+    }
+    if (error instanceof PrismaResourceNotFound) {
+        return [error.message, null] as const
+    }
+    if (error instanceof PrismaClientKnownRequestError) {
+        return [error.message, null] as const
+    }
+    const unknownError = new UnknownError()
+    return [unknownError.message, null] as const
+}
+

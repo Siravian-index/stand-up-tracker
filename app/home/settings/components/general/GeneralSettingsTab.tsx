@@ -3,12 +3,9 @@ import GeneralSetting from "./GeneralSettings"
 import ErrorMessage from "@/app/home/components/ErrorMessage"
 
 
-interface Props {
-    tuple: Awaited<ReturnType<typeof getTemplates>>
-}
 
-const GeneralSettingsTab = ({ tuple }: Props) => {
-    const [error, templates] = tuple
+const GeneralSettingsTab = async () => {
+    const [error, templates] = await getTemplates()
 
     if (error) {
         return <ErrorMessage error={error} />

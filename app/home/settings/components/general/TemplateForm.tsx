@@ -3,6 +3,12 @@ import { TextInput, Switch, Group, ActionIcon, Box, Text, Button, Code, NumberIn
 import { randomId } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
 
+
+
+interface Props {
+  // id: string
+}
+
 export default function TemplateForm() {
   const form = useForm({
     initialValues: {
@@ -38,11 +44,17 @@ export default function TemplateForm() {
     }
 
   }
+  
+
+  const handleSubmit = async (values: typeof form.values) => {
+    console.log(values)
+    debugger
+  }
 
 
   const hasParticipants = Boolean(fields.length)
   return (
-    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+    <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
       <Box maw={500} mx="auto">
         <Group mb="xs">
           <Text fw={500} size="sm" style={{ flex: 1 }}>
