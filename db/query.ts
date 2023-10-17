@@ -24,6 +24,14 @@ const getSettings = async (userEmail: string) => {
     return [null, settings] as const
 }
 
+const getTemplate = async (id: string) => {
+    const template = await prisma.template.findUnique({ where: { id }, include: { Participant: {} } })
+    if (!template) {
+        const err = new PrismaResourceNotFound(`Template not found, looking for id: ${id}`);
+        return [err, null] as const
+    }
+    return [null, template] as const
+}
 
 export const getTemplates = async (): Promise<readonly [null, TemplateType[]] | readonly [string, null]> => {
     try {
@@ -50,4 +58,32 @@ export const getTemplates = async (): Promise<readonly [null, TemplateType[]] | 
     }
 }
 
-const result = { success: true, data: [], error: null }
+// id = UUID
+export const getTemplateById = async (id: string) => {
+
+    try {
+        const [err] = await getSession()
+        if (err) {
+            throw err
+        }
+        const [prismaErr, template] = await getTemplate(id)
+        if (prismaErr) {
+            throw prismaErr
+        }
+        return [null, template] as const
+    } catch (error) {
+        console.error(error)
+        if (error instanceof SessionError) {
+            // TODO: kick user to login page
+            return [error.message, null] as const
+        }
+        if (error instanceof PrismaResourceNotFound) {
+            return [error.message, null] as const
+        }
+        const msg = "Unknown error happened while getting templates' data, please try again later."
+        const unknownError = new UnknownError(msg)
+        return [unknownError.message, null] as const
+    }
+}
+
+// const result = { success: true, data: [], error: null }

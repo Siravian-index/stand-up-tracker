@@ -5,10 +5,10 @@ import { ParticipantType } from "@/schema/participant"
 
 
 interface Props {
+  participants: ParticipantType[]
 }
 
-const ParticipantList = ({ }: Props) => {
-  const participants: ParticipantType[] = []
+const ParticipantList = ({ participants }: Props) => {
 
 
 

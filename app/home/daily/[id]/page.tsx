@@ -1,6 +1,8 @@
 
-import { Flex } from "@mantine/core";
+import { getTemplateById } from "@/db/query";
+import { Flex, Title } from "@mantine/core";
 import Link from "next/link";
+import ParticipantList from "../components/participants/ParticipantList";
 
 interface Params {
     id: string
@@ -10,8 +12,16 @@ interface Props {
     params: Params
 }
 
-const DynamicDashboardPage = ({ params }: Props) => {
+const DynamicDashboardPage = async ({ params }: Props) => {
+    const [error, template] = await getTemplateById(params.id)
 
+    if (error) {
+        return (
+            <div>
+                <p>{error}</p>
+            </div>
+        )
+    }
 
     return (
         <>
@@ -22,9 +32,11 @@ const DynamicDashboardPage = ({ params }: Props) => {
                 direction="column"
             >
                 <p>dynamic</p>
-
-                <code>{JSON.stringify(params, null, 2)}</code>
+                <Title>{template?.name}</Title>
                 <Link href=".">Go back</Link>
+                <code>{JSON.stringify(params, null, 2)}</code>
+                <code>{JSON.stringify(template, null, 2)}</code>
+                <ParticipantList  participants={template?.Participant ?? []}/>
             </Flex>
         </>
 
