@@ -1,7 +1,8 @@
-import { useForm } from '@mantine/form';
+import { useForm, zodResolver } from '@mantine/form';
 import { TextInput, Switch, Group, ActionIcon, Box, Text, Button, Code, NumberInput } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
+import { newTemplateSchema } from '@/schema/template';
 
 
 
@@ -9,13 +10,15 @@ interface Props {
   // id: string
 }
 
+
 export default function TemplateForm() {
   const form = useForm({
     initialValues: {
-      participants: [{ name: '', active: false, key: randomId(), }],
+      participants: [{ name: '', hasParticipated: false, key: randomId(), }],
       name: '',
       time: 90,
     },
+    validate: zodResolver(newTemplateSchema)
   });
 
   const fields = form.values.participants.map((item, index) => (
@@ -28,7 +31,7 @@ export default function TemplateForm() {
       />
       <Switch
         label="Active"
-        {...form.getInputProps(`participants.${index}.active`, { type: 'checkbox' })}
+        {...form.getInputProps(`participants.${index}.hasParticipated`, { type: 'checkbox' })}
       />
       <ActionIcon color="red" onClick={() => form.removeListItem('participants', index)}>
         <IconTrash size={20} />
@@ -40,7 +43,7 @@ export default function TemplateForm() {
     const participants = form.values.participants
     const allHaveValue = participants.every(p => p.name)
     if (allHaveValue || !Boolean(participants.length)) {
-      form.insertListItem('participants', { name: '', active: false, key: randomId() })
+      form.insertListItem('participants', { name: '', hasParticipated: false, key: randomId() })
     }
 
   }
@@ -48,12 +51,12 @@ export default function TemplateForm() {
 
   const handleSubmit = async (values: typeof form.values) => {
     console.log("prev values: ", values)
-    
+
+    // const participants = values.participants.map((p) => ({name: p.}))
     const payload = {
-      email: "",
       values
     }
-    
+
     debugger
     try {
       // const res = await fetch(`http://localhost:3000/api/participants/`, {

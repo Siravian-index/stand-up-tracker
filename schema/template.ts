@@ -10,18 +10,21 @@ const templateSchema = z.object({
     settingsId: z.string(),
 })
 
-const templateListSchema = z.array(templateSchema)
-
 
 export type TemplateType = z.infer<typeof templateSchema>
 
 
 // create new template
 
-const newTemplateSchema = z.object({
-    name: z.string(),
-    participants: z.array(participantSchema.omit({id: true, templateId: true})),
-    time: z.number(),
+export const newTemplateSchema = z.object({
+    name: z.string().min(10, { message: "Template name should have at least 10 letters" }),
+    participants: z.object({
+        name: z.string().min(3, { message: "Minimum 3 characters" }),
+        hasParticipated: z.boolean(),
+        key: z.string()
+    }).array(),
+    // .min(2, { message: "Add at least 2 participants" }),
+    time: z.number().min(10, { message: "Minimum 10 seconds" }).max(300, { message: "Maximum 300 seconds" }),
 })
 
 

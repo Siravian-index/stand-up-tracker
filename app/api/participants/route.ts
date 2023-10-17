@@ -12,7 +12,7 @@ export async function GET() {
 export async function POST(request: Request) {
     // receive formatted payload
     // search (upsert) for settings using email
-    // validate payload
+    // validate payload (zod)
     // create resource (template)
 
 

@@ -7,10 +7,10 @@ import { newTemplateType } from "@/schema/template"
 const createTemplate = async (payload: newTemplateType) => {
     const mutation = {
         data: {
-            userEmail: "placeholder",
+            userEmail: "placeholder@gmail.com",
             Template: {
                 create: {
-                    name,
+                    name: "Placeholder_template_name",
                     Participant: {
                         createMany: { data: [{ name: "david_placeholder", hasParticipated: false }] }
                     },
