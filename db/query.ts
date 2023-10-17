@@ -3,7 +3,7 @@ import { useServerSession } from "@/lib/auth"
 import { PrismaResourceNotFound } from "@/lib/errors/PrismaErrors"
 import { SessionError } from "@/lib/errors/SessionError"
 import { UnknownError } from "@/lib/errors/UnknownError"
-import { TemplateType, templateListSchema } from "@/schema/template"
+import { TemplateType } from "@/schema/template"
 
 const getSession = async () => {
     const session = await useServerSession()
@@ -16,7 +16,7 @@ const getSession = async () => {
 }
 
 const getSettings = async (userEmail: string) => {
-    const settings = await prisma.settings.findUnique({ where: { userEmail}, include: { Template: {} } })
+    const settings = await prisma.settings.findUnique({ where: { userEmail }, include: { Template: {} } })
     if (!settings) {
         const err = new PrismaResourceNotFound(`Settings not found for user: ${userEmail}`);
         return [err, null] as const
@@ -25,7 +25,7 @@ const getSettings = async (userEmail: string) => {
 }
 
 
-export const getTemplates = async () => {
+export const getTemplates = async (): Promise<readonly [null, TemplateType[]] | readonly [string, null]> => {
     try {
         const [err, email] = await getSession()
         if (err) {
@@ -35,12 +35,19 @@ export const getTemplates = async () => {
         if (prismaErr) {
             throw prismaErr
         }
-        return settings.Template
+        return [null, settings.Template] as const
     } catch (error) {
         console.error(error)
-        // check instance of error
-        throw new UnknownError()
+        if (error instanceof SessionError) {
+            return [error.message, null] as const
+        }
+        if (error instanceof PrismaResourceNotFound) {
+            return [error.message, null] as const
+        }
+        const msg = "Unknown error happened while getting templates, please try again later."
+        const unknownError = new UnknownError(msg)
+        return [unknownError.message, null] as const
     }
 }
 
-const result = {success: true, data: [], error: null}
+const result = { success: true, data: [], error: null }
