@@ -1,8 +1,24 @@
 import prisma from "@/db/prismaClient"
-import { getSessionEmail } from "./query"
+import { getSessionEmail } from "@/lib/auth"
+import { Validator } from "@/lib/errors/ValidateError"
+import { newTemplateType } from "@/schema/template"
 
 
-const createTemplate = async () => {
+const createTemplate = async (payload: newTemplateType) => {
+    const mutation = {
+        data: {
+            userEmail: "placeholder",
+            Template: {
+                create: {
+                    name,
+                    Participant: {
+                        createMany: { data: [{ name: "david_placeholder", hasParticipated: false }] }
+                    },
+                    Timebox: { create: { time: 90 } }
+                }
+            }
+        }
+    }
     try {
         const [sessionErr, email] = await getSessionEmail()
         if (sessionErr) {
@@ -21,6 +37,6 @@ const createTemplate = async () => {
         
         
     } catch (error) {
-        
+        return Validator.validateErrorOrRedirect(error)
     }
 }

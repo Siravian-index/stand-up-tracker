@@ -1,7 +1,8 @@
 
 import { z } from "zod";
+import { participantSchema } from "./participant";
 
-export const templateSchema = z.object({
+const templateSchema = z.object({
     id: z.string(),
     name: z.string(),
     createdAt: z.date(),
@@ -9,10 +10,19 @@ export const templateSchema = z.object({
     settingsId: z.string(),
 })
 
-export const templateListSchema = z.array(templateSchema)
-
-
-
+const templateListSchema = z.array(templateSchema)
 
 
 export type TemplateType = z.infer<typeof templateSchema>
+
+
+// create new template
+
+const newTemplateSchema = z.object({
+    name: z.string(),
+    participants: z.array(participantSchema.omit({id: true, templateId: true})),
+    time: z.number(),
+})
+
+
+export type newTemplateType = z.infer<typeof newTemplateSchema>

@@ -1,21 +1,9 @@
 import prisma from "@/db/prismaClient"
-import { useServerSession } from "@/lib/auth"
+import { getSessionEmail } from "@/lib/auth"
 import { PrismaResourceNotFound } from "@/lib/errors/PrismaErrors"
-import { SessionError } from "@/lib/errors/SessionError"
-import { UnknownError } from "@/lib/errors/UnknownError"
-import { TemplateType } from "@/schema/template"
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
-import { redirect } from "next/navigation"
+import { Validator } from "@/lib/errors/ValidateError"
 
-export const getSessionEmail = async () => {
-    const session = await useServerSession()
-    const email = session?.user?.email
-    if (!email) {
-        const err = new SessionError("Email not found in Session (Auth)")
-        return [err, null] as const
-    }
-    return [null, email] as const
-}
+
 
 const getSettings = async (userEmail: string) => {
     const settings = await prisma.settings.findUnique({ where: { userEmail }, include: { Template: {} } })
@@ -47,7 +35,7 @@ export const getTemplates = async () => {
         }
         return [null, settings.Template] as const
     } catch (error) {
-        return validateErrorOrRedirect(error)
+        return Validator.validateErrorOrRedirect(error)
     }
 }
 
@@ -65,22 +53,6 @@ export const getTemplateById = async (id: string) => {
         }
         return [null, template] as const
     } catch (error) {
-        return validateErrorOrRedirect(error)
+        return Validator.validateErrorOrRedirect(error)
     }
 }
-
-const validateErrorOrRedirect = (error: unknown) => {
-    console.error(error)
-    if (error instanceof SessionError) {
-        redirect("/")
-    }
-    if (error instanceof PrismaResourceNotFound) {
-        return [error.message, null] as const
-    }
-    if (error instanceof PrismaClientKnownRequestError) {
-        return [error.message, null] as const
-    }
-    const unknownError = new UnknownError()
-    return [unknownError.message, null] as const
-}
-

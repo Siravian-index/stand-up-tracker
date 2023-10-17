@@ -47,19 +47,20 @@ export default function TemplateForm() {
 
 
   const handleSubmit = async (values: typeof form.values) => {
-    console.log(values)
+    console.log("prev values: ", values)
+    
     const payload = {
-      name: values.name,
-      participants: values.participants,
-      time: values.time,
-
+      email: "",
+      values
     }
+    
+    debugger
     try {
-      const res = await fetch(`http://localhost:3000/api/participants/`, {
-        body: JSON.stringify(payload),
-        method: "POST"
-      })
-      const data = await res.json()
+      // const res = await fetch(`http://localhost:3000/api/participants/`, {
+      //   body: JSON.stringify(payload),
+      //   method: "POST"
+      // })
+      // const data = await res.json()
     } catch (error) {
       console.error(error)
     }

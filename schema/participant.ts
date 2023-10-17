@@ -1,10 +1,11 @@
 
 import { z } from "zod";
 
-const participantSchema = z.object({
+export const participantSchema = z.object({
   id: z.string(),
   name: z.string(),
   hasParticipated: z.boolean().default(false),
+  templateId: z.string(),
 })
 
 

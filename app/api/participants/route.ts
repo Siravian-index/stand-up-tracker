@@ -1,3 +1,4 @@
+import prisma from "@/db/prismaClient"
 
 
 export async function GET() {
@@ -9,9 +10,14 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-    console.log(request.body)
+    // receive formatted payload
+    // search (upsert) for settings using email
+    // validate payload
+    // create resource (template)
 
+
+
+    
     const data = { ping: "POST", }
-
     return Response.json({ data })
 }
