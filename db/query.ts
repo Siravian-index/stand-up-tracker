@@ -47,7 +47,7 @@ export const getTemplates = async () => {
         }
         return [null, settings.Template] as const
     } catch (error) {
-        validateErrorOrRedirect(error)
+        return validateErrorOrRedirect(error)
     }
 }
 
@@ -65,7 +65,7 @@ export const getTemplateById = async (id: string) => {
         }
         return [null, template] as const
     } catch (error) {
-        validateErrorOrRedirect(error)
+        return validateErrorOrRedirect(error)
     }
 }
 

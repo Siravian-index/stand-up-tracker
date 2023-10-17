@@ -12,7 +12,7 @@ interface Props {
 export default function TemplateForm() {
   const form = useForm({
     initialValues: {
-      participants: [{ name: '', active: false, key: randomId() }],
+      participants: [{ name: '', active: false, key: randomId(), }],
       name: '',
       time: 90,
     },
@@ -44,11 +44,25 @@ export default function TemplateForm() {
     }
 
   }
-  
+
 
   const handleSubmit = async (values: typeof form.values) => {
     console.log(values)
-    debugger
+    const payload = {
+      name: values.name,
+      participants: values.participants,
+      time: values.time,
+
+    }
+    try {
+      const res = await fetch(`http://localhost:3000/api/participants/`, {
+        body: JSON.stringify(payload),
+        method: "POST"
+      })
+      const data = await res.json()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
 

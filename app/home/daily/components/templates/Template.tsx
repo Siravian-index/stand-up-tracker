@@ -11,7 +11,7 @@ const Template = ({ template }: Props) => {
 
 
     return (
-        <div key={template.id}>
+        <div>
             <Link href={`/home/daily/${template.id}`}>{template.name} </Link>
         </div>
     )

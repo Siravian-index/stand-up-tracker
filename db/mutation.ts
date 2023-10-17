@@ -8,6 +8,16 @@ const createTemplate = async () => {
         if (sessionErr) {
             throw sessionErr
         }
+        // prisma.settings.upsert({
+        //     where: {
+        //         userEmail: email,
+        //     },
+        //     update: {
+
+        //     },
+        //     create: {
+        //     }
+        // })
         
         
     } catch (error) {

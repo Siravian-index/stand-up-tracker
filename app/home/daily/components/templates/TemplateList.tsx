@@ -22,7 +22,7 @@ const TemplateList = async () => {
     return (
         <div>
             {hasContent && templates.map((t) => (
-                <Template template={t} />
+                <Template template={t} key={t.id}/>
             ))}
         </div>
     )
