@@ -20,10 +20,8 @@ const createTemplate = async (payload: newTemplateType) => {
         }
     }
     try {
-        const [sessionErr, email] = await getSessionEmail()
-        if (sessionErr) {
-            throw sessionErr
-        }
+        const email = await getSessionEmail()
+   
         // prisma.settings.upsert({
         //     where: {
         //         userEmail: email,

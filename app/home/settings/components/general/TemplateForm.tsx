@@ -14,11 +14,11 @@ interface Props {
 export default function TemplateForm() {
   const form = useForm({
     initialValues: {
-      participants: [{ name: '', hasParticipated: false, key: randomId(), }],
-      name: '',
+      participants: [{ name: 'David', hasParticipated: false, key: randomId(), }],
+      name: 'testing template 1',
       time: 90,
     },
-    validate: zodResolver(newTemplateSchema)
+    // validate: zodResolver(newTemplateSchema)
   });
 
   const fields = form.values.participants.map((item, index) => (
@@ -52,18 +52,17 @@ export default function TemplateForm() {
   const handleSubmit = async (values: typeof form.values) => {
     console.log("prev values: ", values)
 
-    // const participants = values.participants.map((p) => ({name: p.}))
-    const payload = {
-      values
-    }
+  
+    const payload = values
 
-    debugger
     try {
-      // const res = await fetch(`http://localhost:3000/api/participants/`, {
-      //   body: JSON.stringify(payload),
-      //   method: "POST"
-      // })
-      // const data = await res.json()
+      const res = await fetch(`http://localhost:3000/api/participants/`, {
+        body: JSON.stringify(payload),
+        method: "POST"
+      })
+      const data = await res.json()
+      debugger
+
     } catch (error) {
       console.error(error)
     }

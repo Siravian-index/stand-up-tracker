@@ -1,4 +1,5 @@
 import prisma from "@/db/prismaClient"
+import { getSessionEmail } from "@/lib/auth"
 import { NextRequest } from "next/server"
 
 
@@ -15,10 +16,43 @@ export async function POST(request: NextRequest) {
     // search (upsert) for settings using email
     // validate payload (zod)
     // create resource (template)
+    try {
+        const payload = await request.json()
 
+        delete payload.participants[0].key
+        console.log(payload)
+        const email = await getSessionEmail()
 
+        const test = await prisma.user.create({
+            data: {
+                email,
+                settings: {
+                    create: {
+                        Template: {
+                            create: [{
+                                name: payload.name,
+                                Participant: {
+                                    create: payload.participants
+                                },
+                                Timebox: {
+                                    create: {
+                                        time: payload.time
+                                    }
+                                }
+                            }]
+                        }
+                    }
+                }
+            }
+        })
+        console.log(JSON.stringify(test, null, 4))
+        return new Response(JSON.stringify({ test: "pong" }))
 
-    
-    const data = { ping: "POST", }
-    return Response.json({ data })
+    } catch (error) {
+        console.error("failed prisma create: ")
+        console.error(error)
+        return new Response(JSON.stringify({ test: "pong" }))
+
+    }
+
 }

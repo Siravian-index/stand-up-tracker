@@ -37,7 +37,7 @@ const GeneralSetting = ({ templates }: Props) => {
       <Modal opened={opened} onClose={close} title="Create new Template">
         <TemplateForm />
       </Modal>
-      {
+      {/* {
         // TODO: handle edit template
         hasContent && false &&
         <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -53,7 +53,7 @@ const GeneralSetting = ({ templates }: Props) => {
             <Button onClick={open}>Edit current template</Button>
           }
         </form>
-      }
+      } */}
       {/* {
         canCreateTemplate &&
         <Button disabled={!canCreateTemplate} onClick={open}>Add new template</Button>
