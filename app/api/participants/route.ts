@@ -20,6 +20,8 @@ export async function POST(request: NextRequest) {
         const payload = await request.json()
 
         delete payload.participants[0].key
+        delete payload.participants[1].key
+
         console.log(payload)
         const email = await getSessionEmail()
 

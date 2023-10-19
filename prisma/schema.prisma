@@ -1,14 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider  = "postgresql"
-  url       = env("DATABASE_URL") // uses connection pooling
-  directUrl = env("DIRECT_URL") // uses a direct connection
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -20,11 +17,9 @@ model Settings {
   id        String     @id @default(uuid())
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  Template  Template[]
-  // activeTemplate
-  // templateid
-  user      User       @relation(fields: [userEmail], references: [email])
   userEmail String     @unique
+  user      User       @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+  Template  Template[]
 }
 
 model Template {
@@ -32,9 +27,9 @@ model Template {
   name        String
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
-  setting     Settings      @relation(fields: [settingsId], references: [id])
   settingsId  String
   Participant Participant[]
+  setting     Settings      @relation(fields: [settingsId], references: [id], onDelete: Cascade)
   Timebox     Timebox?
 }
 
@@ -42,13 +37,13 @@ model Participant {
   id              String   @id @default(uuid())
   name            String
   hasParticipated Boolean
-  template        Template @relation(fields: [templateId], references: [id])
   templateId      String
+  template        Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
 }
 
 model Timebox {
   id         String   @id @default(uuid())
   time       Int
-  template   Template @relation(fields: [templateId], references: [id])
   templateId String   @unique
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
 }
