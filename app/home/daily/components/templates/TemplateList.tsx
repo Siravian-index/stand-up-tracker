@@ -8,7 +8,7 @@ const TemplateList = async () => {
     const [error, templates] = await getTemplates()
     const hasContent = Array.isArray(templates) && Boolean(templates.length)
     if (error) {
-        return <ErrorMessage error={error}/>
+        return <ErrorMessage error={error} />
     }
 
     if (!hasContent) {
@@ -22,7 +22,7 @@ const TemplateList = async () => {
     return (
         <div>
             {hasContent && templates.map((t) => (
-                <Template template={t} key={t.id}/>
+                <Template template={t} key={t.id} />
             ))}
         </div>
     )

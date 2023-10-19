@@ -48,8 +48,9 @@ export const getSessionEmail = async () => {
   const session = await useServerSession()
   const email = session?.user?.email
   if (!email) {
-      const err = new SessionError("Email not found in Session (Auth)")
-      return [err, null] as const
+    // const err = new SessionError("Email not found in Session (Auth)")
+    // return [err, null] as const
+    throw new SessionError("Email not found in Session (Auth)")
   }
-  return [null, email] as const
+  return email
 }

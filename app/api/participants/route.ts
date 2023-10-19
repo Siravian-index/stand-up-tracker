@@ -1,4 +1,5 @@
 import prisma from "@/db/prismaClient"
+import { NextRequest } from "next/server"
 
 
 export async function GET() {
@@ -9,7 +10,7 @@ export async function GET() {
     return Response.json({ data })
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     // receive formatted payload
     // search (upsert) for settings using email
     // validate payload (zod)

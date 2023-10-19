@@ -8,31 +8,24 @@ import { Validator } from "@/lib/errors/ValidateError"
 const getSettings = async (userEmail: string) => {
     const settings = await prisma.settings.findUnique({ where: { userEmail }, include: { Template: {} } })
     if (!settings) {
-        const err = new PrismaResourceNotFound(`Settings not found for user: ${userEmail}`);
-        return [err, null] as const
+        throw new PrismaResourceNotFound(`Settings not found for user: ${userEmail}`)
     }
-    return [null, settings] as const
+    return settings
 }
 
 const getTemplate = async (id: string) => {
     const template = await prisma.template.findUnique({ where: { id }, include: { Participant: {} } })
     if (!template) {
-        const err = new PrismaResourceNotFound(`Template not found, looking for id: ${id}`);
-        return [err, null] as const
+        throw new PrismaResourceNotFound(`Template not found, looking for id: ${id}`)
+
     }
-    return [null, template] as const
+    return template
 }
 
 export const getTemplates = async () => {
     try {
-        const [err, email] = await getSessionEmail()
-        if (err) {
-            throw err
-        }
-        const [prismaErr, settings] = await getSettings(email)
-        if (prismaErr) {
-            throw prismaErr
-        }
+        const email = await getSessionEmail()
+        const settings = await getSettings(email)
         return [null, settings.Template] as const
     } catch (error) {
         return Validator.validateErrorOrRedirect(error)
@@ -43,14 +36,10 @@ export const getTemplates = async () => {
 export const getTemplateById = async (id: string) => {
 
     try {
-        const [err] = await getSessionEmail()
-        if (err) {
-            throw err
-        }
-        const [prismaErr, template] = await getTemplate(id)
-        if (prismaErr) {
-            throw prismaErr
-        }
+        await getSessionEmail()
+
+        const template = await getTemplate(id)
+
         return [null, template] as const
     } catch (error) {
         return Validator.validateErrorOrRedirect(error)
