@@ -1,6 +1,7 @@
 import prisma from "@/db/prismaClient"
 import { getSessionEmail } from "@/lib/auth"
-import { newTemplateSchema } from "@/schema/template"
+import { MAX_TEMPLATE_LIMIT, TemplateLimitReached } from "@/lib/errors/TemplateLimit"
+import { newTemplateSchema, updateTemplateSchema } from "@/schema/template"
 import { NextRequest } from "next/server"
 import { z } from "zod"
 
@@ -51,8 +52,8 @@ export async function POST(request: NextRequest) {
             },
         })
 
-        if (currentTemplates >= 3) {
-            throw new Error("Max Templates limit reached");
+        if (currentTemplates >= MAX_TEMPLATE_LIMIT) {
+            throw new TemplateLimitReached()
         }
 
         const template = await prisma.template.create({
@@ -76,13 +77,62 @@ export async function POST(request: NextRequest) {
             }
         })
 
-        return new Response(JSON.stringify({user, template}))
+        return new Response(JSON.stringify({ user, template }))
 
     } catch (error) {
+        if (error instanceof TemplateLimitReached) {
+            return new Response(JSON.stringify({ test: "pong" }))
+        }
         console.error("failed prisma create: ")
         console.error(error)
         return new Response(JSON.stringify({ test: "pong" }))
 
     }
 
+}
+
+
+export async function PUT(request: NextRequest) {
+    try {
+        const payload = await request.json()
+        const templateData = updateTemplateSchema.parse(payload)
+        const email = await getSessionEmail()
+
+        const currentTemplate = await prisma.template.findUniqueOrThrow({
+            where: {
+                id: templateData.templateId
+            },
+            include: {
+                Participant: true,
+                Timebox: true
+            }
+        })
+
+        await prisma.template.update({
+            where:{
+                id: templateData.name
+            },
+            data: {
+                name: templateData.name,
+                Timebox: {
+                    update: {
+                        where: {
+                            id: currentTemplate.Timebox?.id
+                        },
+                         data: {
+                            time: templateData.time
+                         }
+                    }
+                }
+            }
+        })
+       
+        
+
+        
+
+
+    } catch (error) {
+        return new Response(JSON.stringify({ test: "pong" }))
+    }
 }

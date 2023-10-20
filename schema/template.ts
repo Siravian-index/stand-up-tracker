@@ -28,3 +28,8 @@ export const newTemplateSchema = z.object({
 
 
 export type newTemplateType = z.infer<typeof newTemplateSchema>
+
+
+export const updateTemplateSchema = newTemplateSchema.extend({
+    templateId: z.string(),
+})
