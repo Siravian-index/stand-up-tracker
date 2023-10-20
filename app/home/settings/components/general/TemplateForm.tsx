@@ -54,13 +54,12 @@ export default function TemplateForm() {
     try {
 
       const payload = newTemplateSchema.parse(values)
-      // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/participants/`, {
-      //   body: JSON.stringify(payload),
-      //   method: "POST"
-      // })
-      // const data = await res.json()
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/participants`, {
+        body: JSON.stringify(payload),
+        method: "POST"
+      })
+      const data = await res.json()
       debugger
-
     } catch (error) {
       console.error(error)
     }

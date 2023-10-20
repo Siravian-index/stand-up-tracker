@@ -1,6 +1,8 @@
 import prisma from "@/db/prismaClient"
 import { getSessionEmail } from "@/lib/auth"
+import { newTemplateSchema } from "@/schema/template"
 import { NextRequest } from "next/server"
+import { z } from "zod"
 
 
 export async function GET() {
@@ -18,37 +20,63 @@ export async function POST(request: NextRequest) {
     // create resource (template)
     try {
         const payload = await request.json()
-
-        delete payload.participants[0].key
-        delete payload.participants[1].key
-
-        console.log(payload)
+        const newTemplate = newTemplateSchema.parse(payload)
+        // move this to mutations
         const email = await getSessionEmail()
-
-        const test = await prisma.user.create({
-            data: {
+        const user = await prisma.user.upsert({
+            where: {
+                email,
+            },
+            update: {},
+            create: {
                 email,
                 settings: {
-                    create: {
-                        Template: {
-                            create: [{
-                                name: payload.name,
-                                Participant: {
-                                    create: payload.participants
-                                },
-                                Timebox: {
-                                    create: {
-                                        time: payload.time
-                                    }
-                                }
-                            }]
-                        }
+                    create: {}
+                }
+            },
+            include: {
+                settings: {
+                    select: {
+                        id: true
                     }
                 }
             }
         })
-        console.log(JSON.stringify(test, null, 4))
-        return new Response(JSON.stringify({ test: "pong" }))
+
+        const settingsId = z.string().parse(user.settings?.id)
+
+        const currentTemplates = await prisma.template.count({
+            where: {
+                settingsId
+            },
+        })
+
+        if (currentTemplates >= 3) {
+            throw new Error("Max Templates limit reached");
+        }
+
+        const template = await prisma.template.create({
+            data: {
+                settingsId,
+                name: newTemplate.name,
+                Timebox: {
+                    create: {
+                        time: newTemplate.time
+                    }
+                },
+                Participant: {
+                    createMany: {
+                        data: newTemplate.participants
+                    }
+                }
+            },
+            include: {
+                Participant: true,
+                Timebox: true,
+            }
+        })
+
+        return new Response(JSON.stringify({user, template}))
 
     } catch (error) {
         console.error("failed prisma create: ")
