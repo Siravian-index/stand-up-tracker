@@ -5,11 +5,8 @@ import { getTemplates } from "@/db/query"
 
 
 const TemplateList = async () => {
-    const [error, templates] = await getTemplates()
+    const [_, templates] = await getTemplates()
     const hasContent = Array.isArray(templates) && Boolean(templates.length)
-    if (error) {
-        return <ErrorMessage error={error} />
-    }
 
     if (!hasContent) {
         return (

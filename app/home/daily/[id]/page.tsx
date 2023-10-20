@@ -33,7 +33,7 @@ const DynamicDashboardPage = async ({ params }: Props) => {
                 <Link href=".">Go back</Link>
                 <code>{JSON.stringify(params, null, 2)}</code>
                 <code>{JSON.stringify(template, null, 2)}</code>
-                <ParticipantList  participants={template?.Participant ?? []}/>
+                {/* <ParticipantList  participants={template?.Participant ?? []}/> */}
             </Flex>
         </>
 
