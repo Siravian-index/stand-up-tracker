@@ -2,7 +2,6 @@
 
 import { Tabs } from '@mantine/core';
 import { IconPhoto, IconMessageCircle, IconSettings } from '@tabler/icons-react';
-import GeneralSettingsTab from './general/GeneralSettingsTab';
 
 interface Props {
     generalSettingsTab: React.ReactNode

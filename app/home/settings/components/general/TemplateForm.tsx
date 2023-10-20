@@ -1,5 +1,5 @@
 import { useForm, zodResolver } from '@mantine/form';
-import { TextInput, Switch, Group, ActionIcon, Box, Text, Button, Code, NumberInput } from '@mantine/core';
+import { TextInput, Switch, Group, ActionIcon, Box, Text, Button, Code, NumberInput, Flex } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
 import { newTemplateSchema } from '@/schema/template';
@@ -18,49 +18,47 @@ export default function TemplateForm() {
       name: 'testing template 1',
       time: 90,
     },
-    // validate: zodResolver(newTemplateSchema)
+    validate: zodResolver(newTemplateSchema)
   });
 
   const fields = form.values.participants.map((item, index) => (
     <Group key={item.key} mt="xs">
       <TextInput
+        label={`Participant ${index + 1}`}
         placeholder="Ana Maria"
-        withAsterisk
         style={{ flex: 1 }}
         {...form.getInputProps(`participants.${index}.name`)}
       />
-      <Switch
-        label="Active"
-        {...form.getInputProps(`participants.${index}.hasParticipated`, { type: 'checkbox' })}
-      />
-      <ActionIcon color="red" onClick={() => form.removeListItem('participants', index)}>
-        <IconTrash size={20} />
-      </ActionIcon>
+      <Group mt="1.5rem">
+        <Switch
+          label="Active"
+          {...form.getInputProps(`participants.${index}.hasParticipated`, { type: 'checkbox' })}
+        />
+        <ActionIcon color="red" onClick={() => form.removeListItem('participants', index)}>
+          <IconTrash size={20} />
+        </ActionIcon>
+      </Group>
     </Group>
   ));
 
   const handleInsertListItem = () => {
-    const participants = form.values.participants
-    const allHaveValue = participants.every(p => p.name)
-    if (allHaveValue || !Boolean(participants.length)) {
-      form.insertListItem('participants', { name: '', hasParticipated: false, key: randomId() })
-    }
-
+    // const participants = form.values.participants
+    // const allHaveValue = participants.every(p => p.name)
+    // if (allHaveValue || !Boolean(participants.length)) {
+    // }
+    form.insertListItem('participants', { name: '', hasParticipated: false, key: randomId() })
   }
 
 
   const handleSubmit = async (values: typeof form.values) => {
-    console.log("prev values: ", values)
-
-  
-    const payload = values
-
     try {
-      const res = await fetch(`http://localhost:3000/api/participants/`, {
-        body: JSON.stringify(payload),
-        method: "POST"
-      })
-      const data = await res.json()
+
+      const payload = newTemplateSchema.parse(values)
+      // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/participants/`, {
+      //   body: JSON.stringify(payload),
+      //   method: "POST"
+      // })
+      // const data = await res.json()
       debugger
 
     } catch (error) {
@@ -73,47 +71,34 @@ export default function TemplateForm() {
   return (
     <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
       <Box maw={500} mx="auto">
-        <Group mb="xs">
-          <Text fw={500} size="sm" style={{ flex: 1 }}>
-            Template Name
-          </Text>
-          <Text fw={500} size="sm" pr={90}>
-            Timer
-          </Text>
-        </Group>
         <Group mt="xs">
           <TextInput
-            placeholder="Template Name"
+            label="Template Name"
+            placeholder="Blue Team"
             withAsterisk
             {...form.getInputProps("name")}
           />
           <NumberInput
-            placeholder="Timer value"
+            label="Timer"
+            placeholder="100"
             withAsterisk
-            min={20}
-            max={180}
             style={{ flex: 1 }}
             {...form.getInputProps("time")}
+            onChange={(v) => {
+              form.setFieldValue("time", Number(v))
+            }}
           />
         </Group>
-        {hasParticipants ? (
-          <Group mb="xs">
-            <Text fw={500} size="sm" style={{ flex: 1 }}>
-              Participants
-            </Text>
-            <Text fw={500} size="sm" pr={90}>
-              Status
-            </Text>
-          </Group>
-        ) : (
-          <Text c="dimmed" ta="center">
+
+        {!hasParticipants && (
+          <Text c="dimmed" ta="center" mt="md">
             No one here...
           </Text>
         )}
 
         {fields}
 
-        <Group justify="center" mt="md">
+        <Group justify="start" mt="md">
           <Button
             onClick={handleInsertListItem}
           >
@@ -121,14 +106,13 @@ export default function TemplateForm() {
           </Button>
         </Group>
 
-        <Button type='submit'>
-          Submit
-        </Button>
+        <Group justify="end" mt="md">
+          <Button type='submit' disabled={!form.isValid()}>
+            Submit
+          </Button>
+        </Group>
 
-        <Text size="sm" fw={500} mt="md">
-          Form values:
-        </Text>
-        <Code block>{JSON.stringify(form.values, null, 2)}</Code>
+        <Code mt="1rem" block>{JSON.stringify(form.values, null, 2)}</Code>
       </Box>
     </form >
 

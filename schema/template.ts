@@ -21,7 +21,6 @@ export const newTemplateSchema = z.object({
     participants: z.object({
         name: z.string().min(3, { message: "Minimum 3 characters" }),
         hasParticipated: z.boolean(),
-        key: z.string()
     }).array(),
     // .min(2, { message: "Add at least 2 participants" }),
     time: z.number().min(10, { message: "Minimum 10 seconds" }).max(300, { message: "Maximum 300 seconds" }),
