@@ -107,27 +107,50 @@ export async function PUT(request: NextRequest) {
                 Timebox: true
             }
         })
+        
+        const timeboxId = z.string().parse(currentTemplate.Timebox?.id)
 
         await prisma.template.update({
             where:{
-                id: templateData.name
+                id: currentTemplate.id
             },
             data: {
                 name: templateData.name,
                 Timebox: {
                     update: {
                         where: {
-                            id: currentTemplate.Timebox?.id
+                            id: timeboxId,
                         },
                          data: {
                             time: templateData.time
                          }
                     }
-                }
+                },
             }
         })
+
+        // update or create each participant
+        // prev values
+        const promiseParticipantUpdatedList = templateData.participants.map((participant) => {
+            return prisma.participant.upsert(({
+                where: {
+                    id: participant.id
+                },
+                update: {
+                    name: participant.name,
+                    hasParticipated: participant.hasParticipated
+                },
+                create: {
+                    templateId: currentTemplate.id,
+                    name: participant.name,
+                    hasParticipated: participant.hasParticipated
+                },
+            }))
+        })
        
-        
+        await Promise.all(promiseParticipantUpdatedList)
+
+        // complete transaction
 
         
 

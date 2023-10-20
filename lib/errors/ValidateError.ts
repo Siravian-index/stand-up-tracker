@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation"
-import { SessionError } from "./SessionError"
 import { PrismaResourceNotFound } from "./PrismaErrors"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 import { UnknownError } from "./UnknownError"
@@ -7,9 +5,6 @@ import { UnknownError } from "./UnknownError"
 export class Validator {
     static validateErrorOrRedirect(error: unknown) {
         console.error(error)
-        if (error instanceof SessionError) {
-            redirect("/")
-        }
         if (error instanceof PrismaResourceNotFound) {
             return [error.message, null] as const
         }

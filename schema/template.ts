@@ -32,4 +32,9 @@ export type newTemplateType = z.infer<typeof newTemplateSchema>
 
 export const updateTemplateSchema = newTemplateSchema.extend({
     templateId: z.string(),
+    participants: z.object({
+        id: z.string(),
+        name: z.string().min(3, { message: "Minimum 3 characters" }),
+        hasParticipated: z.boolean(),
+    }).array(),
 })
