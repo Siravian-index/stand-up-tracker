@@ -3,6 +3,7 @@ import { TextInput, Switch, Group, ActionIcon, Box, Text, Button, Code, NumberIn
 import { randomId } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
 import { newTemplateSchema } from '@/schema/template';
+import { TemplateService } from '@/utils/http/templates/templateService';
 
 
 
@@ -42,27 +43,32 @@ export default function TemplateForm() {
   ));
 
   const handleInsertListItem = () => {
-    // const participants = form.values.participants
-    // const allHaveValue = participants.every(p => p.name)
-    // if (allHaveValue || !Boolean(participants.length)) {
-    // }
-    form.insertListItem('participants', { name: '', hasParticipated: false, key: randomId() })
+    const MAX_SIZE = 15
+    const currentParticipants = form.values.participants.length
+    if (currentParticipants < MAX_SIZE) {
+      form.insertListItem('participants', { name: '', hasParticipated: false, key: randomId() })
+    }
   }
 
 
   const handleSubmit = async (values: typeof form.values) => {
-    try {
+    createTemplate(values)
+  }
 
+  const createTemplate = async (values: typeof form.values) => {
+    try {
       const payload = newTemplateSchema.parse(values)
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/participants`, {
-        body: JSON.stringify(payload),
-        method: "POST"
-      })
+      const service = new TemplateService()
+      const res = await service.post(payload)
       const data = await res.json()
-      debugger
+      console.log(data)
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const updateTemplate = async (values: typeof form.values) => {
+
   }
 
 

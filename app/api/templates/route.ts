@@ -1,10 +1,18 @@
 import prisma from "@/db/prismaClient"
 import { getSessionEmail } from "@/lib/auth"
 import { MAX_TEMPLATE_LIMIT, TemplateLimitReached } from "@/lib/errors/TemplateLimit"
+import { ParticipantType } from "@/schema/participant"
 import { newTemplateSchema, updateTemplateSchema } from "@/schema/template"
 import { NextRequest } from "next/server"
 import { z } from "zod"
 
+type partialParticipant = Partial<Omit<ParticipantType, "templateId">>
+interface SortParticipants {
+    toCreate: partialParticipant[]
+    toUpdate: partialParticipant[]
+    toDelete: partialParticipant[]
+
+}
 
 export async function GET() {
     // console.log(request.body)
@@ -110,45 +118,61 @@ export async function PUT(request: NextRequest) {
         
         const timeboxId = z.string().parse(currentTemplate.Timebox?.id)
 
-        await prisma.template.update({
-            where:{
-                id: currentTemplate.id
-            },
-            data: {
-                name: templateData.name,
-                Timebox: {
-                    update: {
-                        where: {
-                            id: timeboxId,
-                        },
-                         data: {
-                            time: templateData.time
-                         }
-                    }
-                },
+        // logic to separate different participants (new, update, delete)
+        const test = templateData.participants.reduce((result, current) => {
+            if (!current.id) {
+                result.toCreate.push(current)
+                return result
             }
-        })
+            if (currentTemplate.Participant.find((p) => p.id === current.id)) {
+                result.toUpdate.push(current)
+                return result
+            } 
+            result.toDelete.push(current)
+            return result
+        }, {toCreate: [], toDelete: [], toUpdate: []} as SortParticipants)
 
-        // update or create each participant
-        // prev values
-        const promiseParticipantUpdatedList = templateData.participants.map((participant) => {
-            return prisma.participant.upsert(({
-                where: {
-                    id: participant.id
-                },
-                update: {
-                    name: participant.name,
-                    hasParticipated: participant.hasParticipated
-                },
-                create: {
-                    templateId: currentTemplate.id,
-                    name: participant.name,
-                    hasParticipated: participant.hasParticipated
-                },
-            }))
-        })
+        console.log(test)
+
+        // await prisma.template.update({
+        //     where:{
+        //         id: currentTemplate.id
+        //     },
+        //     data: {
+        //         name: templateData.name,
+        //         Timebox: {
+        //             update: {
+        //                 where: {
+        //                     id: timeboxId,
+        //                 },
+        //                  data: {
+        //                     time: templateData.time
+        //                  }
+        //             }
+        //         },
+        //     }
+        // })
+
+        // // update or create each participant
+        // // prev values
+        // const promiseParticipantUpdatedList = templateData.participants.map((participant) => {
+        //     return prisma.participant.upsert(({
+        //         where: {
+        //             id: participant.id
+        //         },
+        //         update: {
+        //             name: participant.name,
+        //             hasParticipated: participant.hasParticipated
+        //         },
+        //         create: {
+        //             templateId: currentTemplate.id,
+        //             name: participant.name,
+        //             hasParticipated: participant.hasParticipated
+        //         },
+        //     }))
+        // })
        
-        await Promise.all(promiseParticipantUpdatedList)
+        // await Promise.all(promiseParticipantUpdatedList)
 
         // complete transaction
 
