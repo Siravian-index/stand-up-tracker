@@ -14,10 +14,13 @@ interface SortParticipants {
 
 }
 
-export async function GET() {
+export async function GET(req : NextRequest) {
     // console.log(request.body)
+    const url = new URL(req.url)
 
-    const data = { ping: "pong" }
+    const templateId = url.searchParams.get("templateId")
+
+    const data = { ping: templateId }
 
     return Response.json({ data })
 }

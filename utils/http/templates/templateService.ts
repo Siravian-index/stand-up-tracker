@@ -13,8 +13,8 @@ export class TemplateService extends HttpService {
         })
     }
 
-    get<T>(): Promise<Response> {
-        return fetch(this.URI)
+    get<T>(query = ""): Promise<Response> {
+        return fetch(`${this.URI}${query}`)
     }
 
 }

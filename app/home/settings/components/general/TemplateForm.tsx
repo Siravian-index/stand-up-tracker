@@ -4,51 +4,18 @@ import { randomId } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
 import { newTemplateSchema } from '@/schema/template';
 import { TemplateService } from '@/utils/http/templates/templateService';
+import { useEffect } from 'react';
+import { useTemplateForm } from './useTemplateForm';
 
 
 
 interface Props {
-  // id: string
+  templateId: string
 }
 
 
-export default function TemplateForm() {
-  const form = useForm({
-    initialValues: {
-      participants: [{ name: 'David', hasParticipated: false, key: randomId(), }],
-      name: 'testing template 1',
-      time: 90,
-    },
-    validate: zodResolver(newTemplateSchema)
-  });
-
-  const fields = form.values.participants.map((item, index) => (
-    <Group key={item.key} mt="xs">
-      <TextInput
-        label={`Participant ${index + 1}`}
-        placeholder="Ana Maria"
-        style={{ flex: 1 }}
-        {...form.getInputProps(`participants.${index}.name`)}
-      />
-      <Group mt="1.5rem">
-        <Switch
-          label="Active"
-          {...form.getInputProps(`participants.${index}.hasParticipated`, { type: 'checkbox' })}
-        />
-        <ActionIcon color="red" onClick={() => form.removeListItem('participants', index)}>
-          <IconTrash size={20} />
-        </ActionIcon>
-      </Group>
-    </Group>
-  ));
-
-  const handleInsertListItem = () => {
-    const MAX_SIZE = 15
-    const currentParticipants = form.values.participants.length
-    if (currentParticipants < MAX_SIZE) {
-      form.insertListItem('participants', { name: '', hasParticipated: false, key: randomId() })
-    }
-  }
+export default function TemplateForm({ templateId }: Props) {
+  const { form, fields, handleInsertListItem } = useTemplateForm({ templateId })
 
 
   const handleSubmit = async (values: typeof form.values) => {

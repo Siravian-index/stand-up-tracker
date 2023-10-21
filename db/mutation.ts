@@ -1,10 +1,9 @@
 import prisma from "@/db/prismaClient"
 import { getSessionEmail } from "@/lib/auth"
 import { Validator } from "@/lib/errors/ValidateError"
-import { newTemplateType } from "@/schema/template"
 
 
-const createTemplate = async (payload: newTemplateType) => {
+const createTemplate = async () => {
     const mutation = {
         data: {
             userEmail: "placeholder@gmail.com",
