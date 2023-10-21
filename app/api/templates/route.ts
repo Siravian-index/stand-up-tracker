@@ -14,15 +14,48 @@ interface SortParticipants {
 
 }
 
-export async function GET(req : NextRequest) {
-    // console.log(request.body)
+export async function GET(req: NextRequest) {
     const url = new URL(req.url)
+    const queryId = url.searchParams.get("templateId")
 
-    const templateId = url.searchParams.get("templateId")
+    const templateId = z.string().parse(queryId)
 
-    const data = { ping: templateId }
+    try {
+        const template = await prisma.template.findUniqueOrThrow({
+            where: {
+                id: templateId
+            },
+            select: {
+                id: true,
+                name: true,
+                Participant: {
+                    select: {
+                        hasParticipated: true,
+                        id: true,
+                        name: true,
+                    }
+                },
+                Timebox: {
+                    select: {
+                        time: true
+                    }
+                }
+            }
+        })
 
-    return Response.json({ data })
+        const data = {
+            templateId: template.id,
+            name: template.name,
+            participants: template.Participant,
+            time: template.Timebox?.time
+
+        }
+        const payload = { data, success: true }
+        return Response.json(payload)
+    } catch (error) {
+        return Response.json({ success: false })
+    }
+
 }
 
 export async function POST(request: NextRequest) {
@@ -118,7 +151,7 @@ export async function PUT(request: NextRequest) {
                 Timebox: true
             }
         })
-        
+
         const timeboxId = z.string().parse(currentTemplate.Timebox?.id)
 
         // logic to separate different participants (new, update, delete)
@@ -130,10 +163,10 @@ export async function PUT(request: NextRequest) {
             if (currentTemplate.Participant.find((p) => p.id === current.id)) {
                 result.toUpdate.push(current)
                 return result
-            } 
+            }
             result.toDelete.push(current)
             return result
-        }, {toCreate: [], toDelete: [], toUpdate: []} as SortParticipants)
+        }, { toCreate: [], toDelete: [], toUpdate: [] } as SortParticipants)
 
         console.log(test)
 
@@ -174,12 +207,12 @@ export async function PUT(request: NextRequest) {
         //         },
         //     }))
         // })
-       
+
         // await Promise.all(promiseParticipantUpdatedList)
 
         // complete transaction
 
-        
+
 
 
     } catch (error) {

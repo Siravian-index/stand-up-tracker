@@ -3,7 +3,7 @@ import { TextInput, Switch, Group, ActionIcon } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
 import { NewTemplateType, UpdateTemplateType, newTemplateSchema, updateTemplateSchema } from '@/schema/template';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { TemplateService } from '@/utils/http/templates/templateService';
 
 
@@ -12,18 +12,16 @@ interface Props {
 }
 
 export const useTemplateForm = ({ templateId }: Props) => {
-    const [initialFormValues, setInitialFormValues] = useState<NewTemplateType | UpdateTemplateType>({
-        participants: [],
-        name: 'testing template 1',
-        time: 90,
-    })
-    const form = useForm({
-        initialValues: initialFormValues,
+    const form = useForm<NewTemplateType | UpdateTemplateType>({
+        initialValues: {
+            participants: [],
+            name: '',
+            time: 90,
+        },
         validate: zodResolver(newTemplateSchema)
     })
 
     useEffect(() => {
-        console.log({ templateId })
         getTemplateById(templateId)
     }, [templateId])
 
@@ -34,12 +32,15 @@ export const useTemplateForm = ({ templateId }: Props) => {
         try {
             const service = new TemplateService()
             const res = await service.get(`?templateId=${templateId}`)
-            const data = await res.json()
-            const template = updateTemplateSchema.parse(data)
-            setInitialFormValues(template)
+            const { success, data } = await res.json()
             debugger
+            if (!success) {
+                throw new Error("Failed to load information")
+            }
+            const template = updateTemplateSchema.parse(data)
+            form.setValues(template)
         } catch (error) {
-            
+            console.error(error)
         }
 
     }
