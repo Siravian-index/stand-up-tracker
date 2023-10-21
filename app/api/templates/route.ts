@@ -1,5 +1,5 @@
 import prisma from "@/db/prismaClient"
-import { getSessionEmail } from "@/lib/auth"
+import { useSessionEmail } from "@/lib/auth"
 import { MAX_TEMPLATE_LIMIT, TemplateLimitReached } from "@/lib/errors/TemplateLimit"
 import { ParticipantType } from "@/schema/participant"
 import { newTemplateSchema, updateTemplateSchema } from "@/schema/template"
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         const payload = await request.json()
         const newTemplate = newTemplateSchema.parse(payload)
         // move this to mutations
-        const email = await getSessionEmail()
+        const email = await useSessionEmail()
         const user = await prisma.user.upsert({
             where: {
                 email,
@@ -140,8 +140,9 @@ export async function PUT(request: NextRequest) {
     try {
         const payload = await request.json()
         const templateData = updateTemplateSchema.parse(payload)
-        const email = await getSessionEmail()
+        const email = await useSessionEmail()
 
+        prisma.
         const currentTemplate = await prisma.template.findUniqueOrThrow({
             where: {
                 id: templateData.templateId

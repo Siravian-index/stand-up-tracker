@@ -1,5 +1,5 @@
 import prisma from "@/db/prismaClient"
-import { getSessionEmail } from "@/lib/auth"
+import { useSessionEmail } from "@/lib/auth"
 import { PrismaResourceNotFound } from "@/lib/errors/PrismaErrors"
 import { Validator } from "@/lib/errors/ValidateError"
 
@@ -24,7 +24,7 @@ const getTemplate = async (id: string) => {
 
 export const getTemplates = async () => {
     try {
-        const email = await getSessionEmail()
+        const email = await useSessionEmail()
         const settings = await getSettings(email)
         return [null, settings.Template] as const
     } catch (error) {
@@ -36,7 +36,7 @@ export const getTemplates = async () => {
 export const getTemplateById = async (id: string) => {
 
     try {
-        await getSessionEmail()
+        await useSessionEmail()
 
         const template = await getTemplate(id)
 

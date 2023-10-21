@@ -44,7 +44,7 @@ export const useServerSession = () => {
 //   }
 // }
 
-export const getSessionEmail = async () => {
+export const useSessionEmail = async () => {
   const session = await useServerSession()
   const email = session?.user?.email
   if (!email) {
