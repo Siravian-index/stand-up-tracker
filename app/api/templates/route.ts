@@ -142,7 +142,6 @@ export async function PUT(request: NextRequest) {
         const templateData = updateTemplateSchema.parse(payload)
         const email = await useSessionEmail()
 
-        prisma.
         const currentTemplate = await prisma.template.findUniqueOrThrow({
             where: {
                 id: templateData.templateId
