@@ -1,5 +1,4 @@
 import prisma from "@/db/prismaClient"
-import { getSessionEmail } from "@/lib/auth"
 import { Validator } from "@/lib/errors/ValidateError"
 
 
@@ -19,7 +18,6 @@ const createTemplate = async () => {
         }
     }
     try {
-        const email = await getSessionEmail()
    
         // prisma.settings.upsert({
         //     where: {

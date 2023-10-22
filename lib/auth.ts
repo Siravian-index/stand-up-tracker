@@ -29,8 +29,18 @@ export const validateAuthSessionServer = async ({ isSessionRequired = true, redi
 
 }
 
-export const useServerSession = () => {
-  return getServerSession(authConfig)
+const getServerAuthSession = async () => {
+  try {
+    const session = await getServerSession(authConfig)
+    if (!session) {
+      throw new SessionError()
+    }
+    return session
+  } catch (error) {
+    console.error(error)
+    redirect("/")
+  }
+
 }
 
 // const useValidateClientAuth = () => {
@@ -45,11 +55,15 @@ export const useServerSession = () => {
 // }
 
 export const getSessionEmail = async () => {
-  const session = await useServerSession()
-  const email = session?.user?.email
-  if (!email) {
+  try {
+    const session = await getServerAuthSession()
+    const email = session.user?.email
+    if (!email) {
+      throw new SessionError()
+    }
+    return email
+  } catch (error) {
+    console.error(error)
     redirect("/")
-    // throw new SessionError("Email not found in Session (Auth)")
   }
-  return email
 }

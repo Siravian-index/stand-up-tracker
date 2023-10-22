@@ -6,13 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@mantine/core": "^7.1.2",
     "@mantine/form": "^7.1.2",
     "@mantine/hooks": "^7.1.2",
-    "@prisma/client": "5.4.1",
+    "@prisma/client": "^5.4.2",
     "@tabler/icons-react": "^2.38.0",
     "next": "latest",
     "next-auth": "^4.23.2",
@@ -30,7 +31,7 @@
     "postcss": "^8.4.31",
     "postcss-preset-mantine": "^1.8.0",
     "postcss-simple-vars": "^7.0.1",
-    "prisma": "^5.4.1",
+    "prisma": "^5.4.2",
     "typescript": "latest"
   }
 }
