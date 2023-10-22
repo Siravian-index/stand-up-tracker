@@ -7,8 +7,6 @@ import ErrorMessage from "@/app/home/components/ErrorMessage"
 const GeneralSettingsTab = async () => {
     const [_error, templates] = await getTemplates()
 
-    console.log(templates)
-
     const resource = templates ?? []
     return (
         <>

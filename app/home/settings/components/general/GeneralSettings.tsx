@@ -41,7 +41,7 @@ const GeneralSetting = ({ templates }: Props) => {
       {
         // TODO: handle edit template
         hasContent &&
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form>
           <Select
             label="Current Template"
             placeholder="Pick a template"

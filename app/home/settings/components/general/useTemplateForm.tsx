@@ -48,7 +48,7 @@ export const useTemplateForm = ({ templateId }: Props) => {
 
 
     const fields = form.values.participants.map((item, index) => (
-        <Group key={randomId()} mt="xs">
+        <Group key={index} mt="xs">
             <TextInput
                 label={`Participant ${index + 1}`}
                 placeholder="Ana Maria"

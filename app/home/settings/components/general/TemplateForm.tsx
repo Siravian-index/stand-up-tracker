@@ -1,10 +1,6 @@
-import { useForm, zodResolver } from '@mantine/form';
-import { TextInput, Switch, Group, ActionIcon, Box, Text, Button, Code, NumberInput, Flex } from '@mantine/core';
-import { randomId } from '@mantine/hooks';
-import { IconTrash } from '@tabler/icons-react';
+import { TextInput, Group, Box, Text, Button, Code, NumberInput } from '@mantine/core';
 import { newTemplateSchema } from '@/schema/template';
 import { TemplateService } from '@/utils/http/templates/templateService';
-import { useEffect } from 'react';
 import { useTemplateForm } from './useTemplateForm';
 
 
@@ -29,6 +25,7 @@ export default function TemplateForm({ templateId }: Props) {
       const res = await service.post(payload)
       const data = await res.json()
       console.log(data)
+      // revalidatePath("page")
     } catch (error) {
       console.error(error)
     }
