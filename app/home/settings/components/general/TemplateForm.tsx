@@ -11,46 +11,7 @@ interface Props {
 
 
 export default function TemplateForm({ templateId }: Props) {
-  const { form, fields, handleInsertListItem } = useTemplateForm({ templateId })
-
-
-  const handleSubmit = async (values: typeof form.values) => {
-    if (!templateId) {
-      return await createTemplate(values)
-    }
-    return await updateTemplate(values)
-  }
-
-  const createTemplate = async (values: typeof form.values) => {
-    try {
-      const payload = newTemplateSchema.parse(values)
-      const service = new TemplateService()
-      const res = await service.post(payload)
-      const data = await res.json()
-      console.log(data)
-      // revalidatePath("page")
-      // update select with new name and id
-    } catch (error) {
-      // show error message
-      console.error(error)
-    }
-  }
-
-  const updateTemplate = async (values: typeof form.values) => {
-    console.log(values)
-    try {
-      const payload = updateTemplateSchema.parse(values)
-      const service = new TemplateService()
-      const res = await service.put(payload)
-      const data = await res.json()
-      console.log(data)
-      debugger
-    } catch (error) {
-      console.error(error)
-      
-    }
-  }
-
+  const { form, fields, handleInsertListItem, handleSubmit } = useTemplateForm({ templateId })
 
   const hasParticipants = Boolean(fields.length)
   return (

@@ -47,7 +47,6 @@ export async function GET(req: NextRequest) {
             name: template.name,
             participants: template.Participant,
             time: template.Timebox?.time
-
         }
         const payload = { data, success: true }
         return Response.json(payload)
@@ -63,10 +62,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        const payload = await request.json()
-        const newTemplate = newTemplateSchema.parse(payload)
-        // move this to mutations
+        const body = await request.json()
+        const newTemplate = newTemplateSchema.parse(body)
         const email = await getSessionEmail()
+        
         const user = await prisma.user.upsert({
             where: {
                 email,
@@ -137,86 +136,102 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     try {
-        const payload = await request.json()
-        const templateData = updateTemplateSchema.parse(payload)
-        const email = await getSessionEmail()
+        await prisma.$transaction(async (thread) => {
+            const body = await request.json()
+            const templateData = updateTemplateSchema.parse(body)
+            const email = await getSessionEmail()
 
-        const currentTemplate = await prisma.template.findUniqueOrThrow({
-            where: {
-                id: templateData.templateId
-            },
-            include: {
-                Participant: true,
-                Timebox: true
+            const currentTemplate = await thread.template.findUniqueOrThrow({
+                where: {
+                    id: templateData.templateId
+                },
+                select: {
+                    id: true,
+                    Timebox: {
+                        select: {
+                            id: true
+                        }
+                    }
+                }
+            })
+
+            const timeboxId = z.string().parse(currentTemplate.Timebox?.id)
+
+            // delete participants
+            const promiseParticipantDeleteList = templateData.participantsIdsToDelete.map((id) => {
+                return thread.participant.delete({
+                    where: {
+                        id,
+                    }
+                })
+            })
+            await Promise.all(promiseParticipantDeleteList)
+
+            // update or create each participant
+            const promiseParticipantUpdatedList = templateData.participants.map((participant) => {
+                return thread.participant.upsert(({
+                    where: {
+                        id: participant.id
+                    },
+                    update: {
+                        name: participant.name,
+                        hasParticipated: participant.hasParticipated
+                    },
+                    create: {
+                        templateId: currentTemplate.id,
+                        name: participant.name,
+                        hasParticipated: participant.hasParticipated
+                    },
+                }))
+            })
+
+            await Promise.all(promiseParticipantUpdatedList)
+
+
+            const updatedTemplate = await thread.template.update({
+                where: {
+                    id: currentTemplate.id
+                },
+                data: {
+                    name: templateData.name,
+                    Timebox: {
+                        update: {
+                            where: {
+                                id: timeboxId,
+                            },
+                            data: {
+                                time: templateData.time
+                            }
+                        }
+                    },
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    Participant: {
+                        select: {
+                            hasParticipated: true,
+                            id: true,
+                            name: true,
+                        }
+                    },
+                    Timebox: {
+                        select: {
+                            time: true
+                        }
+                    }
+                }
+            })
+            const data = {
+                templateId: updatedTemplate.id,
+                name: updatedTemplate.name,
+                participants: updatedTemplate.Participant,
+                time: updatedTemplate.Timebox?.time
             }
+            const payload = { data, success: true }
+            return Response.json(payload)
         })
-
-        const timeboxId = z.string().parse(currentTemplate.Timebox?.id)
-
-        // logic to separate different participants (new, update, delete)
-        const test = templateData.participants.reduce((result, current) => {
-            if (!current.id) {
-                result.toCreate.push(current)
-                return result
-            }
-            if (currentTemplate.Participant.find((p) => p.id === current.id)) {
-                result.toUpdate.push(current)
-                return result
-            }
-            result.toDelete.push(current)
-            return result
-        }, { toCreate: [], toDelete: [], toUpdate: [] } as SortParticipants)
-
-        console.log(test)
-
-        // await prisma.template.update({
-        //     where:{
-        //         id: currentTemplate.id
-        //     },
-        //     data: {
-        //         name: templateData.name,
-        //         Timebox: {
-        //             update: {
-        //                 where: {
-        //                     id: timeboxId,
-        //                 },
-        //                  data: {
-        //                     time: templateData.time
-        //                  }
-        //             }
-        //         },
-        //     }
-        // })
-
-        // // update or create each participant
-        // // prev values
-        // const promiseParticipantUpdatedList = templateData.participants.map((participant) => {
-        //     return prisma.participant.upsert(({
-        //         where: {
-        //             id: participant.id
-        //         },
-        //         update: {
-        //             name: participant.name,
-        //             hasParticipated: participant.hasParticipated
-        //         },
-        //         create: {
-        //             templateId: currentTemplate.id,
-        //             name: participant.name,
-        //             hasParticipated: participant.hasParticipated
-        //         },
-        //     }))
-        // })
-
-        // await Promise.all(promiseParticipantUpdatedList)
-
-        // complete transaction
-
-
-        return new Response(JSON.stringify({ test }))
-
-
     } catch (error) {
-        console.error(error)
-        return new NextResponse(JSON.stringify({ test: "Failed" }))
+        return new Response(JSON.stringify({ success: false }), { status: 400 })
     }
 }

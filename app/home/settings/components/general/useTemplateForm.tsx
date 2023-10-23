@@ -3,7 +3,7 @@ import { TextInput, Switch, Group, ActionIcon } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
 import { NewTemplateType, UpdateTemplateType, newTemplateSchema, updateTemplateSchema } from '@/schema/template';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { TemplateService } from '@/utils/http/templates/templateService';
 
 
@@ -11,8 +11,11 @@ interface Props {
     templateId: string
 }
 
+type Template = NewTemplateType | UpdateTemplateType
+
 export const useTemplateForm = ({ templateId }: Props) => {
-    const form = useForm<NewTemplateType | UpdateTemplateType>({
+    const [participantsIdsToDelete, setParticipantsIdsToDelete] = useState<string[]>([])
+    const form = useForm<Template>({
         initialValues: {
             participants: [],
             name: '',
@@ -45,6 +48,12 @@ export const useTemplateForm = ({ templateId }: Props) => {
 
     }
 
+    const onRemoveParticipant = (id: string | undefined, index: number) => {
+        form.removeListItem('participants', index)
+        if (id) {
+            setParticipantsIdsToDelete((prev) => [...prev, id])
+        }
+    }
 
 
     const fields = form.values.participants.map((item, index) => (
@@ -60,7 +69,7 @@ export const useTemplateForm = ({ templateId }: Props) => {
                     label="Active"
                     {...form.getInputProps(`participants.${index}.hasParticipated`, { type: 'checkbox' })}
                 />
-                <ActionIcon color="red" onClick={() => form.removeListItem('participants', index)}>
+                <ActionIcon color="red" onClick={() => onRemoveParticipant(item?.id, index)}>
                     <IconTrash size={20} />
                 </ActionIcon>
             </Group>
@@ -75,10 +84,46 @@ export const useTemplateForm = ({ templateId }: Props) => {
         }
     }
 
+    const handleSubmit = async (values: typeof form.values) => {
+        if (!templateId) {
+          return await createTemplate(values)
+        }
+        return await updateTemplate(values, participantsIdsToDelete)
+      }
+    
+      const createTemplate = async (values: typeof form.values) => {
+        try {
+          const payload = newTemplateSchema.parse(values)
+          const service = new TemplateService()
+          const res = await service.post(payload)
+          const data = await res.json()
+          console.log(data)
+          // revalidatePath("page")
+          // update select with new name and id
+        } catch (error) {
+          // show error message
+          console.error(error)
+        }
+      }
+    
+      const updateTemplate = async (values: typeof form.values, participantsIdsToDelete: string[]) => {
+        try {
+          const payload = updateTemplateSchema.parse({...values, participantsIdsToDelete})
+          const service = new TemplateService()
+          const res = await service.put(payload)
+          const data = await res.json()
+          console.log(data)
+          debugger
+        } catch (error) {
+          console.error(error)
+        }
+      }
+
     return {
         form,
         fields,
         handleInsertListItem,
+        handleSubmit,
 
     }
 }
