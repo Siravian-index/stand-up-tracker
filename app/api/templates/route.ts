@@ -7,12 +7,6 @@ import { NextRequest, NextResponse } from "next/server"
 import { ZodError, z } from "zod"
 
 type partialParticipant = Partial<Omit<ParticipantType, "templateId">>
-interface SortParticipants {
-    toCreate: partialParticipant[]
-    toUpdate: partialParticipant[]
-    toDelete: partialParticipant[]
-
-}
 
 export async function GET(req: NextRequest) {
     const url = new URL(req.url)
@@ -52,91 +46,102 @@ export async function GET(req: NextRequest) {
         return Response.json(payload)
     } catch (error) {
         console.error(error)
-        if (error instanceof ZodError) {
-            return Response.json({ success: false, reason: "Zod validation failed, invalid data was send by client." })
-        }
-        return Response.json({ success: false })
+        return Response.json({ success: false }, {status: 400})
     }
 
 }
 
 export async function POST(request: NextRequest) {
     try {
-        const body = await request.json()
-        const newTemplate = newTemplateSchema.parse(body)
-        const email = await getSessionEmail()
-        
-        const user = await prisma.user.upsert({
-            where: {
-                email,
-            },
-            update: {},
-            create: {
-                email,
-                settings: {
-                    create: {}
-                }
-            },
-            include: {
-                settings: {
-                    select: {
-                        id: true
-                    }
-                }
-            }
-        })
+        const data = await prisma.$transaction(async (thread) => {
+            const body = await request.json()
+            const newTemplate = newTemplateSchema.parse(body)
+            const email = await getSessionEmail()
 
-        const settingsId = z.string().parse(user.settings?.id)
-
-        const currentTemplates = await prisma.template.count({
-            where: {
-                settingsId
-            },
-        })
-
-        if (currentTemplates >= MAX_TEMPLATE_LIMIT) {
-            throw new TemplateLimitReached()
-        }
-
-        const template = await prisma.template.create({
-            data: {
-                settingsId,
-                name: newTemplate.name,
-                Timebox: {
-                    create: {
-                        time: newTemplate.time
+            const user = await thread.user.upsert({
+                where: {
+                    email,
+                },
+                update: {},
+                create: {
+                    email,
+                    settings: {
+                        create: {}
                     }
                 },
-                Participant: {
-                    createMany: {
-                        data: newTemplate.participants
+                include: {
+                    settings: {
+                        select: {
+                            id: true
+                        }
                     }
                 }
-            },
-            include: {
-                Participant: true,
-                Timebox: true,
+            })
+
+            const settingsId = z.string().parse(user.settings?.id)
+
+            const currentTemplates = await thread.template.count({
+                where: {
+                    settingsId
+                },
+            })
+
+            if (currentTemplates >= MAX_TEMPLATE_LIMIT) {
+                throw new TemplateLimitReached()
             }
+
+            const template = await thread.template.create({
+                data: {
+                    settingsId,
+                    name: newTemplate.name,
+                    Timebox: {
+                        create: {
+                            time: newTemplate.time
+                        }
+                    },
+                    Participant: {
+                        createMany: {
+                            data: newTemplate.participants
+                        }
+                    }
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    Participant: {
+                        select: {
+                            hasParticipated: true,
+                            id: true,
+                            name: true,
+                        }
+                    },
+                    Timebox: {
+                        select: {
+                            time: true
+                        }
+                    }
+                }
+            })
+            const data = {
+                templateId: template.id,
+                name: template.name,
+                participants: template.Participant,
+                time: template.Timebox?.time
+            }
+            return data
         })
-
-        return new Response(JSON.stringify({ user, template }))
-
+        const payload = { data, success: true }
+        return Response.json(payload, {status: 201})
     } catch (error) {
         console.error(error)
-        if (error instanceof TemplateLimitReached) {
-            return new Response(JSON.stringify({ success: false, reason: error.message }))
-        }
-        console.error("failed prisma create: ")
-        return new Response(JSON.stringify({ success: false }))
-
+        return new Response(JSON.stringify({ success: false }), {status: 400})
     }
-
 }
 
 
 export async function PUT(request: NextRequest) {
     try {
-        await prisma.$transaction(async (thread) => {
+        const data = await prisma.$transaction(async (thread) => {
             const body = await request.json()
             const templateData = updateTemplateSchema.parse(body)
             const email = await getSessionEmail()
@@ -228,9 +233,10 @@ export async function PUT(request: NextRequest) {
                 participants: updatedTemplate.Participant,
                 time: updatedTemplate.Timebox?.time
             }
-            const payload = { data, success: true }
-            return Response.json(payload)
+            return data
         })
+        const payload = { data, success: true }
+        return Response.json(payload)
     } catch (error) {
         return new Response(JSON.stringify({ success: false }), { status: 400 })
     }
