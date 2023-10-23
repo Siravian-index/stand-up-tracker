@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
                 throw new TemplateLimitReached()
             }
 
+            const stripParticipantsIds = newTemplate.participants.map(({id, ...rest}) => ({...rest}))
             const template = await thread.template.create({
                 data: {
                     settingsId,
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
                     },
                     Participant: {
                         createMany: {
-                            data: newTemplate.participants
+                            data: stripParticipantsIds
                         }
                     }
                 },
@@ -143,7 +144,9 @@ export async function PUT(request: NextRequest) {
     try {
         const data = await prisma.$transaction(async (thread) => {
             const body = await request.json()
-            const templateData = updateTemplateSchema.parse(body)
+            const templateData = updateTemplateSchema.parse(body.template)
+            const participantsIdsToDelete = z.string().array().parse(body.participantsIdsToDelete)
+
             const email = await getSessionEmail()
 
             const currentTemplate = await thread.template.findUniqueOrThrow({
@@ -163,7 +166,7 @@ export async function PUT(request: NextRequest) {
             const timeboxId = z.string().parse(currentTemplate.Timebox?.id)
 
             // delete participants
-            const promiseParticipantDeleteList = templateData.participantsIdsToDelete.map((id) => {
+            const promiseParticipantDeleteList = participantsIdsToDelete.map((id) => {
                 return thread.participant.delete({
                     where: {
                         id,

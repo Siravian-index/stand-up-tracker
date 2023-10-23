@@ -57,7 +57,7 @@ export const useTemplateForm = ({ templateId }: Props) => {
 
 
     const fields = form.values.participants.map((item, index) => (
-        <Group key={index} mt="xs">
+        <Group key={item.id} mt="xs">
             <TextInput
                 label={`Participant ${index + 1}`}
                 placeholder="Ana Maria"
@@ -80,7 +80,7 @@ export const useTemplateForm = ({ templateId }: Props) => {
         const MAX_SIZE = 15
         const currentParticipants = form.values.participants.length
         if (currentParticipants < MAX_SIZE) {
-            form.insertListItem('participants', { name: '', hasParticipated: false })
+            form.insertListItem('participants', { name: '', hasParticipated: false, id: randomId() })
         }
     }
 
@@ -108,7 +108,11 @@ export const useTemplateForm = ({ templateId }: Props) => {
     
       const updateTemplate = async (values: typeof form.values, participantsIdsToDelete: string[]) => {
         try {
-          const payload = updateTemplateSchema.parse({...values, participantsIdsToDelete})
+          const template = updateTemplateSchema.parse(values)
+          const payload = {
+            template,
+            participantsIdsToDelete,
+          }
           const service = new TemplateService()
           const res = await service.put(payload)
           const data = await res.json()
