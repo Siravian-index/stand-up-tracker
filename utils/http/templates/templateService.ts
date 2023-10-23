@@ -13,6 +13,13 @@ export class TemplateService extends HttpService {
         })
     }
 
+    put<T>(payload: T): Promise<Response> {
+        return fetch(this.URI, {
+            method: "PUT",
+            body: JSON.stringify(payload)
+        })
+    }
+
     get<T>(query = ""): Promise<Response> {
         return fetch(`${this.URI}${query}`)
     }

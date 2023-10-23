@@ -8,5 +8,7 @@ export abstract class HttpService {
 
     abstract  post<T>(payload: T): Promise<Response>
 
+    abstract  put<T>(payload: T): Promise<Response>
+
     abstract get<T>(): Promise<Response>
 }

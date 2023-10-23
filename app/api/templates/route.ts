@@ -3,8 +3,8 @@ import { getSessionEmail } from "@/lib/auth"
 import { MAX_TEMPLATE_LIMIT, TemplateLimitReached } from "@/lib/errors/TemplateLimit"
 import { ParticipantType } from "@/schema/participant"
 import { newTemplateSchema, updateTemplateSchema } from "@/schema/template"
-import { NextRequest } from "next/server"
-import { z } from "zod"
+import { NextRequest, NextResponse } from "next/server"
+import { ZodError, z } from "zod"
 
 type partialParticipant = Partial<Omit<ParticipantType, "templateId">>
 interface SortParticipants {
@@ -18,9 +18,8 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url)
     const queryId = url.searchParams.get("templateId")
 
-    const templateId = z.string().parse(queryId)
-
     try {
+        const templateId = z.string().parse(queryId)
         const template = await prisma.template.findUniqueOrThrow({
             where: {
                 id: templateId
@@ -53,16 +52,16 @@ export async function GET(req: NextRequest) {
         const payload = { data, success: true }
         return Response.json(payload)
     } catch (error) {
+        console.error(error)
+        if (error instanceof ZodError) {
+            return Response.json({ success: false, reason: "Zod validation failed, invalid data was send by client." })
+        }
         return Response.json({ success: false })
     }
 
 }
 
 export async function POST(request: NextRequest) {
-    // receive formatted payload
-    // search (upsert) for settings using email
-    // validate payload (zod)
-    // create resource (template)
     try {
         const payload = await request.json()
         const newTemplate = newTemplateSchema.parse(payload)
@@ -124,12 +123,12 @@ export async function POST(request: NextRequest) {
         return new Response(JSON.stringify({ user, template }))
 
     } catch (error) {
+        console.error(error)
         if (error instanceof TemplateLimitReached) {
-            return new Response(JSON.stringify({ test: "pong" }))
+            return new Response(JSON.stringify({ success: false, reason: error.message }))
         }
         console.error("failed prisma create: ")
-        console.error(error)
-        return new Response(JSON.stringify({ test: "pong" }))
+        return new Response(JSON.stringify({ success: false }))
 
     }
 
@@ -213,9 +212,11 @@ export async function PUT(request: NextRequest) {
         // complete transaction
 
 
+        return new Response(JSON.stringify({ test }))
 
 
     } catch (error) {
-        return new Response(JSON.stringify({ test: "pong" }))
+        console.error(error)
+        return new NextResponse(JSON.stringify({ test: "Failed" }))
     }
 }

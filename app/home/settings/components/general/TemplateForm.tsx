@@ -1,5 +1,5 @@
 import { TextInput, Group, Box, Text, Button, Code, NumberInput } from '@mantine/core';
-import { newTemplateSchema } from '@/schema/template';
+import { newTemplateSchema, updateTemplateSchema } from '@/schema/template';
 import { TemplateService } from '@/utils/http/templates/templateService';
 import { useTemplateForm } from './useTemplateForm';
 
@@ -15,7 +15,10 @@ export default function TemplateForm({ templateId }: Props) {
 
 
   const handleSubmit = async (values: typeof form.values) => {
-    createTemplate(values)
+    if (!templateId) {
+      return await createTemplate(values)
+    }
+    return await updateTemplate(values)
   }
 
   const createTemplate = async (values: typeof form.values) => {
@@ -26,13 +29,26 @@ export default function TemplateForm({ templateId }: Props) {
       const data = await res.json()
       console.log(data)
       // revalidatePath("page")
+      // update select with new name and id
     } catch (error) {
+      // show error message
       console.error(error)
     }
   }
 
   const updateTemplate = async (values: typeof form.values) => {
-
+    console.log(values)
+    try {
+      const payload = updateTemplateSchema.parse(values)
+      const service = new TemplateService()
+      const res = await service.put(payload)
+      const data = await res.json()
+      console.log(data)
+      debugger
+    } catch (error) {
+      console.error(error)
+      
+    }
   }
 
 

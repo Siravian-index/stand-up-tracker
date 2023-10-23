@@ -28,7 +28,7 @@ export type NewTemplateType = z.infer<typeof newTemplateSchema>
 
 export const updateTemplateSchema = newTemplateSchema.extend({
     templateId: z.string(),
-    participants: participantSchema.omit({ templateId: true }).array()
+    participants: participantSchema.omit({ templateId: true }).partial({id: true}).array()
 })
 
 export type UpdateTemplateType = z.infer<typeof updateTemplateSchema>
