@@ -6,8 +6,6 @@ import { newTemplateSchema, updateTemplateSchema } from "@/schema/template"
 import { NextRequest, NextResponse } from "next/server"
 import { ZodError, z } from "zod"
 
-type partialParticipant = Partial<Omit<ParticipantType, "templateId">>
-
 export async function GET(req: NextRequest) {
     const url = new URL(req.url)
     const queryId = url.searchParams.get("templateId")
@@ -46,7 +44,7 @@ export async function GET(req: NextRequest) {
         return Response.json(payload)
     } catch (error) {
         console.error(error)
-        return Response.json({ success: false }, {status: 400})
+        return Response.json({ success: false }, { status: 400 })
     }
 
 }
@@ -90,7 +88,7 @@ export async function POST(request: NextRequest) {
                 throw new TemplateLimitReached()
             }
 
-            const stripParticipantsIds = newTemplate.participants.map(({id, ...rest}) => ({...rest}))
+            const stripParticipantsIds = newTemplate.participants.map(({ id, ...rest }) => ({ ...rest }))
             const template = await thread.template.create({
                 data: {
                     settingsId,
@@ -132,10 +130,10 @@ export async function POST(request: NextRequest) {
             return data
         })
         const payload = { data, success: true }
-        return Response.json(payload, {status: 201})
+        return Response.json(payload, { status: 201 })
     } catch (error) {
         console.error(error)
-        return new Response(JSON.stringify({ success: false }), {status: 400})
+        return new Response(JSON.stringify({ success: false }), { status: 400 })
     }
 }
 
@@ -237,6 +235,24 @@ export async function PUT(request: NextRequest) {
                 time: updatedTemplate.Timebox?.time
             }
             return data
+        })
+        const payload = { data, success: true }
+        return Response.json(payload)
+    } catch (error) {
+        return new Response(JSON.stringify({ success: false }), { status: 400 })
+    }
+}
+
+
+async function DELETE(request: NextRequest) {
+    try {
+        const body = await request.json()
+        const { templateId } = z.object({ templateId: z.string() }).parse(body)
+        const email = await getSessionEmail()
+        const data = await prisma.template.delete({
+            where: {
+                id: templateId
+            }
         })
         const payload = { data, success: true }
         return Response.json(payload)

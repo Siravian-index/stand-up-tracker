@@ -24,5 +24,12 @@ export class TemplateService extends HttpService {
         return fetch(`${this.URI}${query}`)
     }
 
+    delete<T>(payload: T): Promise<Response> {
+        return fetch(this.URI, {
+            method: "DELETE",
+            body: JSON.stringify(payload)
+        })
+    }
+
 }
 

@@ -36,7 +36,6 @@ export const useTemplateForm = ({ templateId }: Props) => {
             const service = new TemplateService()
             const res = await service.get(`?templateId=${templateId}`)
             const { success, data } = await res.json()
-            debugger
             if (!success) {
                 throw new Error("Failed to load information")
             }
@@ -86,42 +85,46 @@ export const useTemplateForm = ({ templateId }: Props) => {
 
     const handleSubmit = async (values: typeof form.values) => {
         if (!templateId) {
-          return await createTemplate(values)
+            return await createTemplate(values)
         }
         return await updateTemplate(values, participantsIdsToDelete)
-      }
-    
-      const createTemplate = async (values: typeof form.values) => {
+    }
+
+    const createTemplate = async (values: typeof form.values) => {
         try {
-          const payload = newTemplateSchema.parse(values)
-          const service = new TemplateService()
-          const res = await service.post(payload)
-          const data = await res.json()
-          console.log(data)
-          // revalidatePath("page")
-          // update select with new name and id
+            const payload = newTemplateSchema.parse(values)
+            const service = new TemplateService()
+            const res = await service.post(payload)
+            const data = await res.json()
+            console.log(data)
+            debugger
+
+            // revalidatePath("page")
+            // update select with new name and id
+            // update current values with response from db i.e Template id
+            // so in the next request it is send as PUT
         } catch (error) {
-          // show error message
-          console.error(error)
+            // show error message
+            console.error(error)
         }
-      }
-    
-      const updateTemplate = async (values: typeof form.values, participantsIdsToDelete: string[]) => {
+    }
+
+    const updateTemplate = async (values: typeof form.values, participantsIdsToDelete: string[]) => {
         try {
-          const template = updateTemplateSchema.parse(values)
-          const payload = {
-            template,
-            participantsIdsToDelete,
-          }
-          const service = new TemplateService()
-          const res = await service.put(payload)
-          const data = await res.json()
-          console.log(data)
-          debugger
+            const template = updateTemplateSchema.parse(values)
+            const payload = {
+                template,
+                participantsIdsToDelete,
+            }
+            const service = new TemplateService()
+            const res = await service.put(payload)
+            const data = await res.json()
+            console.log(data)
+            debugger
         } catch (error) {
-          console.error(error)
+            console.error(error)
         }
-      }
+    }
 
     return {
         form,
