@@ -50,9 +50,7 @@ const GeneralSetting = ({ templates }: Props) => {
   const hasTemplateId = Boolean(form.values.templateId)
   const formTitle = hasTemplateId ? "Update Template" : "Create new Template"
   return (
-    <Flex
-      justify="center"
-    >
+    <>
 
       <Modal opened={opened} onClose={close} title={formTitle}>
         <TemplateForm
@@ -61,19 +59,26 @@ const GeneralSetting = ({ templates }: Props) => {
           removeTemplate={removeTemplateFromSelect}
         />
       </Modal>
-      {
-        // TODO: handle edit template
-        hasContent &&
-        <form>
-          <Select
-            label="Current Template"
-            placeholder="Pick a template"
-            data={templatesData}
-            {...form.getInputProps("templateId")}
-          />
+      <Flex
+        justify="center"
+        direction="column"
+        mt="md"
+      >
 
-        </form>
-      }
+        {
+          // TODO: handle edit template
+          hasContent &&
+          <form>
+            <Select
+              label="Current Template"
+              placeholder="Pick a template"
+              data={templatesData}
+              {...form.getInputProps("templateId")}
+            />
+
+          </form>
+        }
+      </Flex>
       <Group mt="md">
         {
           hasTemplateId &&
@@ -84,7 +89,8 @@ const GeneralSetting = ({ templates }: Props) => {
           <Button disabled={!canCreateTemplate} onClick={handleCreateTemplateClick}>Add new template</Button>
         }
       </Group>
-    </Flex>
+    </>
+
   )
 }
 

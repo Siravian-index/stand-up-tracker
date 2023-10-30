@@ -64,7 +64,7 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
             </Button>
           </Group>
 
-          <Code mt="1rem" block>{JSON.stringify(form.values, null, 2)}</Code>
+          {/* <Code mt="1rem" block>{JSON.stringify(form.values, null, 2)}</Code> */}
         </Box>
       </form >
       {

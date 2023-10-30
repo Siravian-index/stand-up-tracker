@@ -20,7 +20,7 @@ const SettingsTabs = ({ generalSettingsTab }: Props) => {
                     <Tabs.Tab value="general" leftSection={<IconSettings style={iconStyle} />}>
                         General
                     </Tabs.Tab>
-                    <Tabs.Tab value="todo" leftSection={<IconPhoto style={iconStyle} />}>
+                    <Tabs.Tab disabled value="todo" leftSection={<IconPhoto style={iconStyle} />}>
                         Todo
                     </Tabs.Tab>
                     <Tabs.Tab disabled value="colors" leftSection={<IconMessageCircle style={iconStyle} />}>
@@ -29,7 +29,7 @@ const SettingsTabs = ({ generalSettingsTab }: Props) => {
 
                 </Tabs.List>
 
-                <Tabs.Panel value="general">
+                <Tabs.Panel value="general" miw="18rem" w="22rem">
                     {generalSettingsTab}
                 </Tabs.Panel>
 
