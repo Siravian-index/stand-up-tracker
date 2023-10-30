@@ -5,6 +5,7 @@ import { useTemplateForm } from './useTemplateForm';
 import DeleteTemplateForm from './DeleteTemplateForm';
 import { Action } from './GeneralSettings';
 import { useDisclosure } from '@mantine/hooks';
+import SettingsNotification from '../SettingsNotification';
 
 
 
@@ -16,13 +17,19 @@ interface Props {
 
 
 export default function TemplateForm({ templateId, updateTemplateToSelect, removeTemplate }: Props) {
-  const { form, fields, handleInsertListItem, handleSubmit, templateName, loading } = useTemplateForm({ templateId, updateTemplateToSelect })
+  const { form, fields, handleInsertListItem, handleSubmit, templateName, loading, notification } = useTemplateForm({ templateId, updateTemplateToSelect })
 
   const hasParticipants = Boolean(fields.length)
   const exist = Boolean(templateId.length)
   return (
     <>
       <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+      <SettingsNotification
+        title={notification.title}
+        content={notification.content}
+        show={notification.show}
+        type={notification.isSuccess ? "SUCCESS" : "ERROR"}
+      />
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Box maw={500} mx="auto">
           <Group mt="xs">

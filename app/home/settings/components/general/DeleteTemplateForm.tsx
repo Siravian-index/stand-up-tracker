@@ -33,7 +33,8 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
             const res = await service.delete({ templateId })
             const { success, data } = await res.json()
             const template = templateSchema.parse(data)
-            return { success, msg: "Deleted Successfully", data: template }
+            debugger
+            return { success, msg: "Success", data: template }
         } catch (error) {
             return { success: false, msg: "Failed to delete, try again" }
         } finally {

@@ -17,6 +17,12 @@ interface Props {
 type Template = NewTemplateType | UpdateTemplateType
 
 export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) => {
+    const [msg, setMsg] = useState({
+        title: "",
+        content: "",
+        show: false,
+        isSuccess: false,
+    })
     const templateNameRef = useRef("")
     const [loadingForm, setLoadingForm] = useState(false)
     const [participantsIdsToDelete, setParticipantsIdsToDelete] = useState<string[]>([])
@@ -110,13 +116,24 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
             const payload = newTemplateSchema.parse(values)
             const service = new TemplateService()
             const res = await service.post(payload)
-            const { data } = await res.json()
+            const { data, success } = await res.json()
             debugger
             const template = updateTemplateSchema.parse(data)
             updateTemplateToSelect({ label: template.name, value: template.templateId }, "ADD")
             form.setValues(template)
+            setMsg({
+                title: "Template Created",
+                content: "The operation was successful",
+                isSuccess: success,
+                show: true,
+            })
         } catch (error) {
-            // show error message
+            setMsg({
+                title: "Something went wrong",
+                content: "Couldn't perform the operation",
+                isSuccess: false,
+                show: true,
+            })
             console.error(error)
         } finally {
             setLoadingForm(false)
@@ -133,12 +150,23 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
             }
             const service = new TemplateService()
             const res = await service.put(payload)
-            const { data } = await res.json()
+            const { data, success} = await res.json()
             const updatedTemplate = updateTemplateSchema.parse(data)
             form.setValues(updatedTemplate)
             updateTemplateToSelect({ label: updatedTemplate.name, value: updatedTemplate.templateId }, "UPDATE")
-            debugger
+            setMsg({
+                title: "Template Updated",
+                content: "The operation was successful",
+                isSuccess: success,
+                show: true,
+            })
         } catch (error) {
+            setMsg({
+                title: "Something went wrong",
+                content: "Couldn't perform the operation",
+                isSuccess: false,
+                show: true,
+            })
             console.error(error)
         } finally {
             setLoadingForm(false)
@@ -152,5 +180,6 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
         handleSubmit,
         templateName: templateNameRef.current,
         loading: loadingForm,
+        notification: msg,
     }
 }
