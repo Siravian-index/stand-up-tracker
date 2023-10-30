@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Group, Select } from "@mantine/core"
+import { Box, Flex, Group, Select } from "@mantine/core"
 import TemplateForm from "./TemplateForm"
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Button } from '@mantine/core';
@@ -50,7 +50,9 @@ const GeneralSetting = ({ templates }: Props) => {
   const hasTemplateId = Boolean(form.values.templateId)
   const formTitle = hasTemplateId ? "Update Template" : "Create new Template"
   return (
-    <Box maw={500}>
+    <Flex
+      justify="center"
+    >
 
       <Modal opened={opened} onClose={close} title={formTitle}>
         <TemplateForm
@@ -72,8 +74,7 @@ const GeneralSetting = ({ templates }: Props) => {
 
         </form>
       }
-      <Group>
-
+      <Group mt="md">
         {
           hasTemplateId &&
           <Button onClick={open}>Edit current template</Button>
@@ -83,7 +84,7 @@ const GeneralSetting = ({ templates }: Props) => {
           <Button disabled={!canCreateTemplate} onClick={handleCreateTemplateClick}>Add new template</Button>
         }
       </Group>
-    </Box>
+    </Flex>
   )
 }
 
