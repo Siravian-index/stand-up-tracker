@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { participantSchema } from "./participant";
 
-const templateSchema = z.object({
+export const templateSchema = z.object({
     id: z.string(),
     name: z.string().min(10, { message: "Template name should have at least 10 letters" }),
     createdAt: z.date(),

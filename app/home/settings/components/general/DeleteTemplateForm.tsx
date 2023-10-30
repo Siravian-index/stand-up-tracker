@@ -1,3 +1,4 @@
+import { templateSchema } from "@/schema/template";
 import { TemplateService } from "@/utils/http/templates/templateService";
 import { Box, Button, LoadingOverlay, Modal, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -31,10 +32,7 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
             const service = new TemplateService()
             const res = await service.delete({ templateId })
             const { success, data } = await res.json()
-            const id = z.object({
-                id: z.string()
-            })
-            const template = id.parse(data)
+            const template = templateSchema.parse(data)
             return { success, msg: "Deleted Successfully", data: template }
         } catch (error) {
             return { success: false, msg: "Failed to delete, try again" }
@@ -49,7 +47,7 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
             return
         }
         const { success, msg, data } = await deleteTemplate(templateId)
-        if (success && data) {
+        if (success && data?.id) {
             removeTemplate(data.id)
             resetForm()
         }
