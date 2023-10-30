@@ -13,6 +13,7 @@ interface Props {
   templates: TemplateType[]
 }
 
+export type Action = "ADD" | "UPDATE"
 
 const GeneralSetting = ({ templates }: Props) => {
   const [templatesData, setTemplatesData] = useState(() => templates.map((t) => ({ label: t.name, value: t.id })))
@@ -28,26 +29,33 @@ const GeneralSetting = ({ templates }: Props) => {
     open()
   }
 
-  const addTemplateToSelect = (template: { label: string, value: string }) => {
-    setTemplatesData((prev) => [...prev, template])
+  const updateTemplateToSelect = (template: { label: string, value: string }, action: Action) => {
+    if (action === "ADD") {
+      setTemplatesData((prev) => [...prev, template])
+    }
+    if (action === "UPDATE") {
+      setTemplatesData((prev) => prev.map((t) => t.value === template.value ? template : t))
+    }
   }
 
   const removeTemplateFromSelect = (templateId: string) => {
     setTemplatesData((prev) => prev.filter((t) => t.value !== templateId))
+    form.setFieldValue("templateId", "")
   }
 
 
-  const currentTemplates = templates.length
+  const currentTemplates = templatesData.length
   const canCreateTemplate = currentTemplates < MAX_TEMPLATE_LIMIT
   const hasContent = Boolean(currentTemplates)
   const hasTemplateId = Boolean(form.values.templateId)
+  const formTitle = hasTemplateId ? "Update Template" : "Create new Template"
   return (
     <Box maw={500}>
 
-      <Modal opened={opened} onClose={close} title="Create new Template">
+      <Modal opened={opened} onClose={close} title={formTitle}>
         <TemplateForm
           templateId={form.values.templateId}
-          addTemplate={addTemplateToSelect}
+          updateTemplateToSelect={updateTemplateToSelect}
           removeTemplate={removeTemplateFromSelect}
         />
       </Modal>

@@ -3,20 +3,22 @@ import { newTemplateSchema, updateTemplateSchema } from '@/schema/template';
 import { TemplateService } from '@/utils/http/templates/templateService';
 import { useTemplateForm } from './useTemplateForm';
 import DeleteTemplateForm from './DeleteTemplateForm';
+import { Action } from './GeneralSettings';
 
 
 
 interface Props {
   templateId: string
-  addTemplate: (template: { label: string, value: string }) => void
+  updateTemplateToSelect: (template: { label: string, value: string }, action: Action) => void
   removeTemplate: (templateId: string) => void
 }
 
 
-export default function TemplateForm({ templateId, addTemplate, removeTemplate }: Props) {
-  const { form, fields, handleInsertListItem, handleSubmit } = useTemplateForm({ templateId, addTemplate })
+export default function TemplateForm({ templateId, updateTemplateToSelect, removeTemplate }: Props) {
+  const { form, fields, handleInsertListItem, handleSubmit, templateName } = useTemplateForm({ templateId, updateTemplateToSelect })
 
   const hasParticipants = Boolean(fields.length)
+  const exist = Boolean(templateId.length)
   return (
     <>
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
@@ -65,11 +67,15 @@ export default function TemplateForm({ templateId, addTemplate, removeTemplate }
           <Code mt="1rem" block>{JSON.stringify(form.values, null, 2)}</Code>
         </Box>
       </form >
-      <DeleteTemplateForm
-        templateId={templateId}
-        templateName={form.values.name}
-        removeTemplate={removeTemplate}
-      />
+      {
+        exist &&
+        <DeleteTemplateForm
+          templateId={templateId}
+          templateName={templateName}
+          removeTemplate={removeTemplate}
+          resetForm={form.reset}
+        />
+      }
     </>
 
   );

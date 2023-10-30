@@ -9,10 +9,11 @@ interface Props {
     templateId: string
     templateName: string
     removeTemplate: (templateId: string) => void
+    resetForm: () => void
 }
 
 
-export default function DeleteTemplateForm({ templateId, templateName, removeTemplate }: Props) {
+export default function DeleteTemplateForm({ templateId, templateName, removeTemplate, resetForm }: Props) {
     const [opened, { open, close }] = useDisclosure(false);
     const form = useForm({
         initialValues: {
@@ -44,6 +45,7 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
         const { success, msg, data } = await deleteTemplate(templateId)
         if (success && data) {
             removeTemplate(data.id)
+            resetForm()
         }
         // show some msg to user
     }

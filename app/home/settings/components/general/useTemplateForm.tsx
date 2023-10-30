@@ -3,19 +3,21 @@ import { TextInput, Switch, Group, ActionIcon } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
 import { IconTrash } from '@tabler/icons-react';
 import { NewTemplateType, UpdateTemplateType, newTemplateSchema, updateTemplateSchema } from '@/schema/template';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { TemplateService } from '@/utils/http/templates/templateService';
+import { Action } from './GeneralSettings';
 
 
 interface Props {
     templateId: string
-    addTemplate: (template: { label: string, value: string }) => void
+    updateTemplateToSelect: (template: { label: string, value: string }, action: Action) => void
 
 }
 
 type Template = NewTemplateType | UpdateTemplateType
 
-export const useTemplateForm = ({ templateId, addTemplate }: Props) => {
+export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) => {
+    const templateNameRef = useRef("")
     const [participantsIdsToDelete, setParticipantsIdsToDelete] = useState<string[]>([])
     const form = useForm<Template>({
         initialValues: {
@@ -42,6 +44,7 @@ export const useTemplateForm = ({ templateId, addTemplate }: Props) => {
                 throw new Error("Failed to load information")
             }
             const template = updateTemplateSchema.parse(data)
+            templateNameRef.current = template.name
             form.setValues(template)
         } catch (error) {
             console.error(error)
@@ -97,14 +100,11 @@ export const useTemplateForm = ({ templateId, addTemplate }: Props) => {
             const payload = newTemplateSchema.parse(values)
             const service = new TemplateService()
             const res = await service.post(payload)
-            const data = await res.json()
-            console.log(data)
+            const { data } = await res.json()
             debugger
-            if (!data.success) {
-                throw new Error("Failed to create Template");
-            }
-            addTemplate({label: data.name, value: data.templateId})
-            // revalidatePath("page")
+            const template = updateTemplateSchema.parse(data)
+            updateTemplateToSelect({ label: template.name, value: template.templateId }, "ADD")
+            form.setValues(template)
         } catch (error) {
             // show error message
             console.error(error)
@@ -120,8 +120,10 @@ export const useTemplateForm = ({ templateId, addTemplate }: Props) => {
             }
             const service = new TemplateService()
             const res = await service.put(payload)
-            const data = await res.json()
-            console.log(data)
+            const { data } = await res.json()
+            const updatedTemplate = updateTemplateSchema.parse(data)
+            form.setValues(updatedTemplate)
+            updateTemplateToSelect({ label: updatedTemplate.name, value: updatedTemplate.templateId }, "UPDATE")
             debugger
         } catch (error) {
             console.error(error)
@@ -133,6 +135,6 @@ export const useTemplateForm = ({ templateId, addTemplate }: Props) => {
         fields,
         handleInsertListItem,
         handleSubmit,
-
+        templateName: templateNameRef.current
     }
 }
