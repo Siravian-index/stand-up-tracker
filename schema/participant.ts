@@ -1,10 +1,11 @@
 
 import { z } from "zod";
 
-const participantSchema = z.object({
+export const participantSchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().min(3, { message: "Minimum 3 characters" }),
   hasParticipated: z.boolean().default(false),
+  templateId: z.string(),
 })
 
 
