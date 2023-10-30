@@ -1,9 +1,10 @@
-import { TextInput, Group, Box, Text, Button, Code, NumberInput } from '@mantine/core';
+import { TextInput, Group, Box, Text, Button, Code, NumberInput, LoadingOverlay, Notification } from '@mantine/core';
 import { newTemplateSchema, updateTemplateSchema } from '@/schema/template';
 import { TemplateService } from '@/utils/http/templates/templateService';
 import { useTemplateForm } from './useTemplateForm';
 import DeleteTemplateForm from './DeleteTemplateForm';
 import { Action } from './GeneralSettings';
+import { useDisclosure } from '@mantine/hooks';
 
 
 
@@ -15,12 +16,13 @@ interface Props {
 
 
 export default function TemplateForm({ templateId, updateTemplateToSelect, removeTemplate }: Props) {
-  const { form, fields, handleInsertListItem, handleSubmit, templateName } = useTemplateForm({ templateId, updateTemplateToSelect })
+  const { form, fields, handleInsertListItem, handleSubmit, templateName, loading } = useTemplateForm({ templateId, updateTemplateToSelect })
 
   const hasParticipants = Boolean(fields.length)
   const exist = Boolean(templateId.length)
   return (
     <>
+      <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Box maw={500} mx="auto">
           <Group mt="xs">
@@ -29,6 +31,7 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
               placeholder="Blue Team"
               withAsterisk
               {...form.getInputProps("name")}
+              disabled={loading}
             />
             <NumberInput
               label="Timer"
@@ -39,6 +42,7 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
               onChange={(v) => {
                 form.setFieldValue("time", Number(v))
               }}
+              disabled={loading}
             />
           </Group>
 
@@ -50,16 +54,17 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
 
           {fields}
 
-          <Group justify="start" mt="md">
+          <Group justify="center" mt="md">
             <Button
               onClick={handleInsertListItem}
+              disabled={loading}
             >
               Add participant
             </Button>
           </Group>
 
           <Group justify="end" mt="md">
-            <Button type='submit' disabled={!form.isValid()}>
+            <Button type='submit' disabled={loading || !form.isValid()}>
               Submit
             </Button>
           </Group>
@@ -68,7 +73,7 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
         </Box>
       </form >
       {
-        exist &&
+        (exist && !loading) &&
         <DeleteTemplateForm
           templateId={templateId}
           templateName={templateName}
@@ -77,6 +82,5 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
         />
       }
     </>
-
   );
 }

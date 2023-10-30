@@ -81,12 +81,12 @@ const GeneralSetting = ({ templates }: Props) => {
       </Flex>
       <Group mt="md">
         {
-          hasTemplateId &&
-          <Button onClick={open}>Edit current template</Button>
-        }
-        {
           canCreateTemplate &&
           <Button disabled={!canCreateTemplate} onClick={handleCreateTemplateClick}>Add new template</Button>
+        }
+        {
+          hasTemplateId &&
+          <Button onClick={open}>Edit current template</Button>
         }
       </Group>
     </>

@@ -1,7 +1,8 @@
 import { TemplateService } from "@/utils/http/templates/templateService";
-import { Button, Modal, TextInput } from "@mantine/core";
+import { Box, Button, LoadingOverlay, Modal, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
 import { z } from "zod";
 
 
@@ -14,7 +15,9 @@ interface Props {
 
 
 export default function DeleteTemplateForm({ templateId, templateName, removeTemplate, resetForm }: Props) {
+    const [isLoading, setIsLoading] = useState(false)
     const [opened, { open, close }] = useDisclosure(false);
+
     const form = useForm({
         initialValues: {
             templateToDelete: "",
@@ -24,6 +27,7 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
 
     const deleteTemplate = async (templateId: string) => {
         try {
+            setIsLoading(true)
             const service = new TemplateService()
             const res = await service.delete({ templateId })
             const { success, data } = await res.json()
@@ -34,6 +38,8 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
             return { success, msg: "Deleted Successfully", data: template }
         } catch (error) {
             return { success: false, msg: "Failed to delete, try again" }
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -58,19 +64,24 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
     return (
         <>
             <Modal opened={opened} onClose={close} title={`Deleting "${templateName}".`}>
+                <LoadingOverlay
+                    visible={isLoading}
+                    zIndex={1000}
+                    overlayProps={{ radius: "sm", blur: 2 }}
+                />
                 <form onSubmit={form.onSubmit(({ templateToDelete }) => handleSubmit(templateToDelete))}>
                     <TextInput
                         label="Type template's name to delete"
                         placeholder={templateName}
                         withAsterisk
+                        disabled={isLoading}
                         {...form.getInputProps("templateToDelete")}
                     />
-                    <Button color="red" type="submit">
+                    <Button color="red" type="submit" disabled={isLoading}>
                         Delete Template
                     </Button>
                 </form>
             </Modal>
-
             <Button color="red" onClick={open}>
                 Danger Zone
             </Button>
