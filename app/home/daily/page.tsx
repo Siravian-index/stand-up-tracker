@@ -1,6 +1,7 @@
 
-import { Flex, Title } from "@mantine/core";
+import { Flex } from "@mantine/core";
 import TemplateList from "./components/templates/TemplateList";
+import Clock from "../components/Clock";
 
 const Dashboard = () => {
 
@@ -13,7 +14,7 @@ const Dashboard = () => {
         align="center"
         direction="column"
       >
-        <p>static page</p>
+        <Clock />
 
         <TemplateList />
       </Flex>

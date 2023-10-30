@@ -45,7 +45,7 @@ const Countdown = ({ }: Props) => {
   const text = isRunning ? "Pause" : "Start"
   return (
     <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: '100px' }}>
+      <div style={{ fontSize: '6rem' }}>
         <span>{addPad(minutes)}</span>:<span>{addPad(seconds)}</span>
       </div>
       {/* <p>{isRunning ? 'Running' : 'Not running'}</p> */}
