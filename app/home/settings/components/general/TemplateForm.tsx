@@ -1,11 +1,7 @@
 import { TextInput, Group, Box, Text, Button, Code, NumberInput, LoadingOverlay, Notification } from '@mantine/core';
-import { newTemplateSchema, updateTemplateSchema } from '@/schema/template';
-import { TemplateService } from '@/utils/http/templates/templateService';
 import { useTemplateForm } from './useTemplateForm';
 import DeleteTemplateForm from './DeleteTemplateForm';
 import { Action } from './GeneralSettings';
-import { useDisclosure } from '@mantine/hooks';
-import SettingsNotification from '../SettingsNotification';
 
 
 
@@ -17,19 +13,12 @@ interface Props {
 
 
 export default function TemplateForm({ templateId, updateTemplateToSelect, removeTemplate }: Props) {
-  const { form, fields, handleInsertListItem, handleSubmit, templateName, loading, notification } = useTemplateForm({ templateId, updateTemplateToSelect })
-
+  const { form, fields, handleInsertListItem, handleSubmit, templateName, loading, } = useTemplateForm({ templateId, updateTemplateToSelect })
   const hasParticipants = Boolean(fields.length)
   const exist = Boolean(templateId.length)
   return (
     <>
       <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-      <SettingsNotification
-        title={notification.title}
-        content={notification.content}
-        show={notification.show}
-        type={notification.isSuccess ? "SUCCESS" : "ERROR"}
-      />
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Box maw={500} mx="auto">
           <Group mt="xs">
@@ -75,7 +64,6 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
               Submit
             </Button>
           </Group>
-
           {/* <Code mt="1rem" block>{JSON.stringify(form.values, null, 2)}</Code> */}
         </Box>
       </form >
