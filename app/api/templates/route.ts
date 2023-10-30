@@ -244,7 +244,7 @@ export async function PUT(request: NextRequest) {
 }
 
 
-async function DELETE(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
     try {
         const body = await request.json()
         const { templateId } = z.object({ templateId: z.string() }).parse(body)

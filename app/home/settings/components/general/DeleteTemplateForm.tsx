@@ -2,15 +2,17 @@ import { TemplateService } from "@/utils/http/templates/templateService";
 import { Button, Modal, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { z } from "zod";
 
 
 interface Props {
     templateId: string
     templateName: string
+    removeTemplate: (templateId: string) => void
 }
 
 
-export default function DeleteTemplateForm({ templateId, templateName }: Props) {
+export default function DeleteTemplateForm({ templateId, templateName, removeTemplate }: Props) {
     const [opened, { open, close }] = useDisclosure(false);
     const form = useForm({
         initialValues: {
@@ -23,11 +25,14 @@ export default function DeleteTemplateForm({ templateId, templateName }: Props) 
         try {
             const service = new TemplateService()
             const res = await service.delete({ templateId })
-            debugger
-            return { success: true, msg: "Deleted Successfully" }
+            const { success, data } = await res.json()
+            const id = z.object({
+                id: z.string()
+            })
+            const template = id.parse(data)
+            return { success, msg: "Deleted Successfully", data: template }
         } catch (error) {
-            console.error(error)
-            return { success: true, msg: "Failed to delete, try again" }
+            return { success: false, msg: "Failed to delete, try again" }
         }
     }
 
@@ -36,7 +41,10 @@ export default function DeleteTemplateForm({ templateId, templateName }: Props) 
         if (!isValid) {
             return
         }
-        const { success, msg } = await deleteTemplate(templateId)
+        const { success, msg, data } = await deleteTemplate(templateId)
+        if (success && data) {
+            removeTemplate(data.id)
+        }
         // show some msg to user
     }
 
@@ -55,7 +63,7 @@ export default function DeleteTemplateForm({ templateId, templateName }: Props) 
                         withAsterisk
                         {...form.getInputProps("templateToDelete")}
                     />
-                    <Button color="red">
+                    <Button color="red" type="submit">
                         Delete Template
                     </Button>
                 </form>

@@ -8,11 +8,13 @@ import DeleteTemplateForm from './DeleteTemplateForm';
 
 interface Props {
   templateId: string
+  addTemplate: (template: { label: string, value: string }) => void
+  removeTemplate: (templateId: string) => void
 }
 
 
-export default function TemplateForm({ templateId }: Props) {
-  const { form, fields, handleInsertListItem, handleSubmit } = useTemplateForm({ templateId })
+export default function TemplateForm({ templateId, addTemplate, removeTemplate }: Props) {
+  const { form, fields, handleInsertListItem, handleSubmit } = useTemplateForm({ templateId, addTemplate })
 
   const hasParticipants = Boolean(fields.length)
   return (
@@ -66,6 +68,7 @@ export default function TemplateForm({ templateId }: Props) {
       <DeleteTemplateForm
         templateId={templateId}
         templateName={form.values.name}
+        removeTemplate={removeTemplate}
       />
     </>
 

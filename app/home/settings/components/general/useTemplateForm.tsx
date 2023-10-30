@@ -9,11 +9,13 @@ import { TemplateService } from '@/utils/http/templates/templateService';
 
 interface Props {
     templateId: string
+    addTemplate: (template: { label: string, value: string }) => void
+
 }
 
 type Template = NewTemplateType | UpdateTemplateType
 
-export const useTemplateForm = ({ templateId }: Props) => {
+export const useTemplateForm = ({ templateId, addTemplate }: Props) => {
     const [participantsIdsToDelete, setParticipantsIdsToDelete] = useState<string[]>([])
     const form = useForm<Template>({
         initialValues: {
@@ -98,11 +100,11 @@ export const useTemplateForm = ({ templateId }: Props) => {
             const data = await res.json()
             console.log(data)
             debugger
-
+            if (!data.success) {
+                throw new Error("Failed to create Template");
+            }
+            addTemplate({label: data.name, value: data.templateId})
             // revalidatePath("page")
-            // update select with new name and id
-            // update current values with response from db i.e Template id
-            // so in the next request it is send as PUT
         } catch (error) {
             // show error message
             console.error(error)

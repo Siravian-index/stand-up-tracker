@@ -7,6 +7,7 @@ import { Modal, Button } from '@mantine/core';
 import { TemplateType } from "@/schema/template";
 import { useForm } from "@mantine/form";
 import { MAX_TEMPLATE_LIMIT } from "@/lib/errors/TemplateLimit";
+import { useState } from "react";
 
 interface Props {
   templates: TemplateType[]
@@ -14,6 +15,7 @@ interface Props {
 
 
 const GeneralSetting = ({ templates }: Props) => {
+  const [templatesData, setTemplatesData] = useState(() => templates.map((t) => ({ label: t.name, value: t.id })))
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
     initialValues: {
@@ -26,7 +28,14 @@ const GeneralSetting = ({ templates }: Props) => {
     open()
   }
 
-  const templatesData = templates.map((t) => ({ label: t.name, value: t.id }))
+  const addTemplateToSelect = (template: { label: string, value: string }) => {
+    setTemplatesData((prev) => [...prev, template])
+  }
+
+  const removeTemplateFromSelect = (templateId: string) => {
+    setTemplatesData((prev) => prev.filter((t) => t.value !== templateId))
+  }
+
 
   const currentTemplates = templates.length
   const canCreateTemplate = currentTemplates < MAX_TEMPLATE_LIMIT
@@ -36,7 +45,11 @@ const GeneralSetting = ({ templates }: Props) => {
     <Box maw={500}>
 
       <Modal opened={opened} onClose={close} title="Create new Template">
-        <TemplateForm templateId={form.values.templateId} />
+        <TemplateForm
+          templateId={form.values.templateId}
+          addTemplate={addTemplateToSelect}
+          removeTemplate={removeTemplateFromSelect}
+        />
       </Modal>
       {
         // TODO: handle edit template
