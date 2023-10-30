@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react"
 import { FormEvent } from "react"
+import GoogleButton from "./GoogleButton"
 
 
 const SignInForm = () => {
@@ -21,7 +22,7 @@ const SignInForm = () => {
   return (
     <section>
       <form onSubmit={handleSubmit}>
-        <button>Sign in with google</button>
+        <GoogleButton/>
       </form>
     </section>
   )
