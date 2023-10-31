@@ -1,5 +1,7 @@
 
-import { Flex, Title } from "@mantine/core"
+"use client"
+
+import { Box, Flex, Title } from "@mantine/core"
 import Participant from "./Participant"
 import { ParticipantType } from "@/schema/participant"
 
@@ -9,9 +11,6 @@ interface Props {
 }
 
 const ParticipantList = ({ participants }: Props) => {
-
-
-
   return (
     <>
       <Flex
@@ -25,18 +24,31 @@ const ParticipantList = ({ participants }: Props) => {
         <Title order={3}>Participants</Title>
 
 
-        <Title order={3}>Pending</Title>
+        <Flex
+          justify="space-around"
+          direction="row"
+          wrap="wrap"
+          gap="lg"
+        >
 
-        {participants.filter((p) => !p.hasParticipated).map((p) => {
+          <Box >
+            <Title order={3}>Pending</Title>
 
-          return <Participant key={p.id} participant={p} />
-        })}
+            {participants.filter((p) => !p.hasParticipated).map((p) => {
 
-        <Title order={3}>Already participated</Title>
-        {participants.filter((p) => p.hasParticipated).map((p) => {
+              return <Participant key={p.id} participant={p} />
+            })}
+          </Box>
 
-          return <Participant key={p.id} participant={p} />
-        })}
+          <Box >
+            <Title order={3}>Done talking</Title>
+            {participants.filter((p) => p.hasParticipated).map((p) => {
+
+              return <Participant key={p.id} participant={p} />
+            })}
+          </Box>
+        </Flex>
+
       </Flex>
     </>
   )

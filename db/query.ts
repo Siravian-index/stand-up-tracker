@@ -14,7 +14,28 @@ const getSettings = async (userEmail: string) => {
 }
 
 const getTemplate = async (id: string) => {
-    const template = await prisma.template.findUnique({ where: { id }, include: { Participant: {} } })
+    const template = await prisma.template.findUnique({
+        where: {
+            id,
+        },
+        select: {
+            id: true,
+            name: true,
+            Participant: {
+                select: {
+                    id: true,
+                    name: true,
+                    hasParticipated: true,
+                    templateId: true,
+                }
+            },
+            Timebox: {
+                select: {
+                    time: true
+                }
+            }
+        }
+    })
     if (!template) {
         throw new PrismaResourceNotFound(`Template not found, looking for id: ${id}`)
 

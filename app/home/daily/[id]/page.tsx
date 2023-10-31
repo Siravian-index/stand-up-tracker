@@ -29,13 +29,12 @@ const DynamicDashboardPage = async ({ params }: Props) => {
                 align="center"
                 direction="column"
             >
-                <Countdown />
+                <Countdown time={template?.Timebox?.time ?? 90} />
                 <p>dynamic</p>
                 <Title>{template?.name}</Title>
                 <Link href=".">Go back</Link>
-                <code>{JSON.stringify(params, null, 2)}</code>
-                <code>{JSON.stringify(template, null, 2)}</code>
-                {/* <ParticipantList  participants={template?.Participant ?? []}/> */}
+                <ParticipantList participants={template?.Participant || []}/>
+                {/* <code>{JSON.stringify(template, null, 4)}</code> */}
             </Flex>
         </>
 

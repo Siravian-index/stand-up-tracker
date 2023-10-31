@@ -1,4 +1,5 @@
 import { ParticipantType } from "@/schema/participant"
+import { Box, Checkbox, Flex } from "@mantine/core"
 
 interface Props {
   participant: ParticipantType
@@ -7,11 +8,13 @@ interface Props {
 const Participant = ({ participant, }: Props) => {
 
   return (
-    <div>
-      <span onClick={() => {
-        // toggleParticipation(participant.id)
-      }}>{participant.name}</span>
-    </div>
+    <Flex
+      justify="center"
+
+    >
+      <span>{participant.name}</span>
+      <Checkbox />
+    </Flex>
   )
 }
 
