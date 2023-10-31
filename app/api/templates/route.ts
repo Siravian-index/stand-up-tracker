@@ -239,6 +239,7 @@ export async function PUT(request: NextRequest) {
         const payload = { data, success: true }
         return Response.json(payload)
     } catch (error) {
+        console.log(error)
         return new Response(JSON.stringify({ success: false }), { status: 400 })
     }
 }

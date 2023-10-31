@@ -1,19 +1,26 @@
+"use client"
+
 import { ParticipantType } from "@/schema/participant"
-import { Box, Checkbox, Flex } from "@mantine/core"
+import { Checkbox, Flex, Text } from "@mantine/core"
+import { useState } from "react"
 
 interface Props {
   participant: ParticipantType
+  handleChange: (id: string, checked: boolean) => void
 }
 
-const Participant = ({ participant, }: Props) => {
-
+const Participant = ({ participant, handleChange }: Props) => {
   return (
     <Flex
-      justify="center"
-
+      gap="lg"
+      mt="sm"
     >
-      <span>{participant.name}</span>
-      <Checkbox />
+      <Checkbox
+        labelPosition="left"
+        label={participant.name}
+        checked={participant.hasParticipated}
+        onChange={(event) => handleChange(participant.id, event.currentTarget.checked)}
+      />
     </Flex>
   )
 }
