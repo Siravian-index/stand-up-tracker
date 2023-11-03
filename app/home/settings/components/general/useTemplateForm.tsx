@@ -136,6 +136,7 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
             const updatedTemplate = updateTemplateSchema.parse(data)
             form.setValues(updatedTemplate)
             updateTemplateToSelect({ label: updatedTemplate.name, value: updatedTemplate.templateId }, "UPDATE")
+            setParticipantsIdsToDelete([])
         } catch (error) {
 
             console.error(error)

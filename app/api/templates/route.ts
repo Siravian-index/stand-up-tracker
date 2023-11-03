@@ -3,6 +3,7 @@ import { getSessionEmail } from "@/lib/auth"
 import { MAX_TEMPLATE_LIMIT, TemplateLimitReached } from "@/lib/errors/TemplateLimit"
 import { ParticipantType } from "@/schema/participant"
 import { newTemplateSchema, updateTemplateSchema } from "@/schema/template"
+import { Prisma } from "@prisma/client"
 import { NextRequest, NextResponse } from "next/server"
 import { ZodError, z } from "zod"
 
@@ -51,11 +52,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
+        const body = await request.json()
+        const newTemplate = newTemplateSchema.parse(body)
+        const email = await getSessionEmail()
         const data = await prisma.$transaction(async (thread) => {
-            const body = await request.json()
-            const newTemplate = newTemplateSchema.parse(body)
-            const email = await getSessionEmail()
-
             const user = await thread.user.upsert({
                 where: {
                     email,
@@ -140,13 +140,11 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
     try {
+        const body = await request.json()
+        const templateData = updateTemplateSchema.parse(body.template)
+        const participantsIdsToDelete = z.string().array().parse(body.participantsIdsToDelete)
+        const email = await getSessionEmail()
         const data = await prisma.$transaction(async (thread) => {
-            const body = await request.json()
-            const templateData = updateTemplateSchema.parse(body.template)
-            const participantsIdsToDelete = z.string().array().parse(body.participantsIdsToDelete)
-
-            const email = await getSessionEmail()
-
             const currentTemplate = await thread.template.findUniqueOrThrow({
                 where: {
                     id: templateData.templateId
@@ -235,7 +233,12 @@ export async function PUT(request: NextRequest) {
                 time: updatedTemplate.Timebox?.time
             }
             return data
-        })
+        },
+            {
+                isolationLevel: Prisma.TransactionIsolationLevel.Serializable, // optional, default defined by database configuration
+                maxWait: 30000, // default: 2000
+                timeout: 30000, // default: 5000
+            })
         const payload = { data, success: true }
         return Response.json(payload)
     } catch (error) {
