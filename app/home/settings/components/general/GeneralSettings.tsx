@@ -13,7 +13,7 @@ interface Props {
   templates: TemplateType[]
 }
 
-export type Action = "ADD" | "UPDATE"
+export type Action = "ADD" | "UPDATE" | "REMOVE"
 
 const GeneralSetting = ({ templates }: Props) => {
   const [templatesData, setTemplatesData] = useState(() => templates.map((t) => ({ label: t.name, value: t.id })))
@@ -32,15 +32,17 @@ const GeneralSetting = ({ templates }: Props) => {
   const updateTemplateToSelect = (template: { label: string, value: string }, action: Action) => {
     if (action === "ADD") {
       setTemplatesData((prev) => [...prev, template])
+      form.setFieldValue("templateId", template.value)
     }
     if (action === "UPDATE") {
       setTemplatesData((prev) => prev.map((t) => t.value === template.value ? template : t))
-    }
-  }
+      form.setFieldValue("templateId", template.value)
 
-  const removeTemplateFromSelect = (templateId: string) => {
-    setTemplatesData((prev) => prev.filter((t) => t.value !== templateId))
-    form.setFieldValue("templateId", "")
+    }
+    if (action === "REMOVE") {
+      setTemplatesData((prev) => prev.filter((t) => t.value !== template.value))
+      form.setFieldValue("templateId", "")
+    }
   }
 
 
@@ -52,13 +54,12 @@ const GeneralSetting = ({ templates }: Props) => {
   return (
     <>
 
-      <Modal opened={opened} onClose={close} title={formTitle}>
-        <TemplateForm
-          templateId={form.values.templateId}
-          updateTemplateToSelect={updateTemplateToSelect}
-          removeTemplate={removeTemplateFromSelect}
-        />
-      </Modal>
+      <TemplateForm
+        templateId={form.values.templateId}
+        updateTemplateToSelect={updateTemplateToSelect}
+        isModalOpen={opened}
+        closeModal={close}
+      />
       <Flex
         justify="center"
         direction="column"

@@ -4,18 +4,18 @@ import { Box, Button, LoadingOverlay, Modal, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import { z } from "zod";
+import { Action } from "./GeneralSettings";
 
 
 interface Props {
     templateId: string
     templateName: string
-    removeTemplate: (templateId: string) => void
-    resetForm: () => void
+    updateTemplateToSelect: (template: { label: string, value: string }, action: Action) => void
+    onDelete: () => void
 }
 
 
-export default function DeleteTemplateForm({ templateId, templateName, removeTemplate, resetForm }: Props) {
+export default function DeleteTemplateForm({ templateId, templateName, updateTemplateToSelect, onDelete }: Props) {
     const [isLoading, setIsLoading] = useState(false)
     const [opened, { open, close }] = useDisclosure(false);
 
@@ -31,12 +31,13 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
             setIsLoading(true)
             const service = new TemplateService()
             const res = await service.delete({ templateId })
-            const { success, data } = await res.json()
-            const template = templateSchema.parse(data)
-            debugger
-            return { success, msg: "Success", data: template }
+            const { data } = await res.json()
+            const template = templateSchema.omit({createdAt: true, updatedAt: true}).parse(data)
+            updateTemplateToSelect({ label: template.name, value: template.id }, "REMOVE")
+            close()
+            onDelete()
         } catch (error) {
-            return { success: false, msg: "Failed to delete, try again" }
+            console.error(error)
         } finally {
             setIsLoading(false)
         }
@@ -45,14 +46,10 @@ export default function DeleteTemplateForm({ templateId, templateName, removeTem
     const handleSubmit = async (templateToDelete: string) => {
         const isValid = validateTemplateNames(templateName, templateToDelete)
         if (!isValid) {
+            form.setFieldError("templateToDelete", "Name must match template's name")
             return
         }
-        const { success, msg, data } = await deleteTemplate(templateId)
-        if (success && data?.id) {
-            removeTemplate(data.id)
-            resetForm()
-        }
-        // show some msg to user
+        await deleteTemplate(templateId)
     }
 
     const validateTemplateNames = (originalTemplateName: string, userInputTemplateName: string) => {

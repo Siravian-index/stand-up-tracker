@@ -1,4 +1,4 @@
-import { TextInput, Group, Box, Text, Button, Code, NumberInput, LoadingOverlay, Notification } from '@mantine/core';
+import { TextInput, Group, Box, Text, Button, Code, NumberInput, LoadingOverlay, Notification, Modal } from '@mantine/core';
 import { useTemplateForm } from './useTemplateForm';
 import DeleteTemplateForm from './DeleteTemplateForm';
 import { Action } from './GeneralSettings';
@@ -8,16 +8,26 @@ import { Action } from './GeneralSettings';
 interface Props {
   templateId: string
   updateTemplateToSelect: (template: { label: string, value: string }, action: Action) => void
-  removeTemplate: (templateId: string) => void
+  isModalOpen: boolean
+  closeModal: () => void
 }
 
 
-export default function TemplateForm({ templateId, updateTemplateToSelect, removeTemplate }: Props) {
+export default function TemplateForm({ templateId, updateTemplateToSelect, isModalOpen, closeModal }: Props) {
   const { form, fields, handleInsertListItem, handleSubmit, templateName, loading, } = useTemplateForm({ templateId, updateTemplateToSelect })
   const hasParticipants = Boolean(fields.length)
   const exist = Boolean(templateId.length)
+
+  const onDelete = () => {
+    form.reset()
+    closeModal()
+  }
+
+  const formTitle = exist ? "Update Template" : "Create new Template"
   return (
     <>
+      <Modal opened={isModalOpen} onClose={closeModal} title={formTitle}>
+
       <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Box maw={500} mx="auto">
@@ -78,10 +88,11 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
         <DeleteTemplateForm
           templateId={templateId}
           templateName={templateName}
-          removeTemplate={removeTemplate}
-          resetForm={form.reset}
+          updateTemplateToSelect={updateTemplateToSelect}
+          onDelete={onDelete}
         />
       }
+      </Modal>
     </>
   );
 }

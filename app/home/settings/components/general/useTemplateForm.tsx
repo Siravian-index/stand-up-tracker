@@ -112,8 +112,7 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
             const payload = newTemplateSchema.parse(values)
             const service = new TemplateService()
             const res = await service.post(payload)
-            const { data, success } = await res.json()
-            debugger
+            const { data } = await res.json()
             const template = updateTemplateSchema.parse(data)
             updateTemplateToSelect({ label: template.name, value: template.templateId }, "ADD")
             form.setValues(template)
