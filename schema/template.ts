@@ -4,7 +4,7 @@ import { participantSchema } from "./participant";
 
 export const templateSchema = z.object({
     id: z.string(),
-    name: z.string().min(10, { message: "Template name should have at least 10 letters" }),
+    name: z.string().min(5, { message: "Min 5 characters" }),
     createdAt: z.date(),
     updatedAt: z.date(),
     settingsId: z.string(),

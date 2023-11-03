@@ -1,4 +1,4 @@
-import { TextInput, Group, Box, Text, Button, Code, NumberInput, LoadingOverlay, Notification, Modal } from '@mantine/core';
+import { TextInput, Group, Box, Text, Button, Code, NumberInput, LoadingOverlay, Notification, Modal, Flex } from '@mantine/core';
 import { useTemplateForm } from './useTemplateForm';
 import DeleteTemplateForm from './DeleteTemplateForm';
 import { Action } from './GeneralSettings';
@@ -28,70 +28,75 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, isMod
     <>
       <Modal opened={isModalOpen} onClose={closeModal} title={formTitle}>
 
-      <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-        <Box maw={500} mx="auto">
-          <Group mt="xs">
-            <TextInput
-              label="Name"
-              description="Template's name."
-              placeholder="Blue Team"
-              withAsterisk
-              {...form.getInputProps("name")}
-              disabled={loading}
-              onBlur={() => form.validate()}
-            />
-            <NumberInput
-              allowDecimal={false}
-              allowNegative={false}
-              label="Timer"
-              placeholder="100"
-              withAsterisk
-              style={{ flex: 1 }}
-              {...form.getInputProps("time")}
-              onChange={(v) => {
-                form.setFieldValue("time", Number(v))
-              }}
-              onBlur={() => form.validate()}
-              description="Time in seconds."
-              disabled={loading}
-            />
-          </Group>
-
-          {!hasParticipants && (
-            <Text c="dimmed" ta="center" mt="md">
-              No one here...
-            </Text>
-          )}
-
-          {fields}
-
-          <Group justify="center" mt="md">
-            <Button
-              onClick={handleInsertListItem}
-              disabled={loading}
+        <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+          <Box maw={500} mx="auto" >
+            <Flex
+              mt="xs"
+              justify="space-between"
+              style={{ outline: "2px solid red" }}
             >
-              Add participant
-            </Button>
-          </Group>
+              <TextInput
+                label="Name"
+                description="Template's name."
+                placeholder="Blue Team"
+                withAsterisk
+                {...form.getInputProps("name")}
+                disabled={loading}
+                onBlur={() => form.validate()}
+              />
+              <NumberInput
+                maw="8rem"
+                allowDecimal={false}
+                allowNegative={false}
+                label="Timer"
+                placeholder="100"
+                withAsterisk
+                // style={{ flex: 1 }}
+                {...form.getInputProps("time")}
+                onChange={(v) => {
+                  form.setFieldValue("time", Number(v))
+                }}
+                onBlur={() => form.validate()}
+                description="Time in seconds."
+                disabled={loading}
+              />
+            </Flex>
 
-          <Group justify="end" mt="md">
-            <Button type='submit' disabled={loading || !form.isValid()}>
-              Submit
-            </Button>
-          </Group>
-          {/* <Code mt="1rem" block>{JSON.stringify(form.values, null, 2)}</Code> */}
-        </Box>
-      </form >
-      {
-        (exist && !loading) &&
-        <DeleteTemplateForm
-          templateId={templateId}
-          templateName={templateName}
-          updateTemplateToSelect={updateTemplateToSelect}
-          onDelete={onDelete}
-        />
-      }
+            {!hasParticipants && (
+              <Text c="dimmed" ta="center" mt="md">
+                No one here...
+              </Text>
+            )}
+
+            {fields}
+
+            <Group justify="center" mt="md">
+              <Button
+                onClick={handleInsertListItem}
+                disabled={loading}
+              >
+                Add participant
+              </Button>
+            </Group>
+
+            <Group justify="end" mt="md">
+              <Button type='submit' disabled={loading || !form.isValid()}>
+                Submit
+              </Button>
+            </Group>
+            {/* <Code mt="1rem" block>{JSON.stringify(form.values, null, 2)}</Code> */}
+          </Box>
+        </form >
+        {
+          (exist && !loading) &&
+          <DeleteTemplateForm
+            templateId={templateId}
+            templateName={templateName}
+            updateTemplateToSelect={updateTemplateToSelect}
+            onDelete={onDelete}
+          />
+        }
       </Modal>
     </>
   );
