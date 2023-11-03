@@ -1,7 +1,7 @@
 
-import { Flex, Title } from "@mantine/core";
-import Countdown from "./components/Countdown"
-import ParticipantList from "./components/participants/ParticipantList";
+import { Flex } from "@mantine/core";
+import TemplateList from "./components/templates/TemplateList";
+import Clock from "../components/Clock";
 
 const Dashboard = () => {
 
@@ -14,12 +14,10 @@ const Dashboard = () => {
         align="center"
         direction="column"
       >
-        <Title>Daily Stand-up</Title >
+        <Clock />
 
+        <TemplateList />
       </Flex>
-      <Countdown />
-
-      <ParticipantList />
     </>
   )
 }
