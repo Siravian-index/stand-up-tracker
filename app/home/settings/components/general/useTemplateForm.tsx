@@ -18,6 +18,7 @@ type Template = NewTemplateType | UpdateTemplateType
 
 export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) => {
     const templateNameRef = useRef("")
+    const [loadingForm, setLoadingForm] = useState(false)
     const [participantsIdsToDelete, setParticipantsIdsToDelete] = useState<string[]>([])
     const form = useForm<Template>({
         initialValues: {
@@ -37,6 +38,7 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
             return
         }
         try {
+            setLoadingForm(true)
             const service = new TemplateService()
             const res = await service.get(`?templateId=${templateId}`)
             const { success, data } = await res.json()
@@ -48,6 +50,8 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
             form.setValues(template)
         } catch (error) {
             console.error(error)
+        } finally {
+            setLoadingForm(false)
         }
 
     }
@@ -67,13 +71,18 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
                 placeholder="Ana Maria"
                 style={{ flex: 1 }}
                 {...form.getInputProps(`participants.${index}.name`)}
+                disabled={loadingForm}
             />
             <Group mt="1.5rem">
                 <Switch
                     label="Active"
                     {...form.getInputProps(`participants.${index}.hasParticipated`, { type: 'checkbox' })}
+                    disabled={loadingForm}
                 />
-                <ActionIcon color="red" onClick={() => onRemoveParticipant(item?.id, index)}>
+                <ActionIcon
+                    color="red"
+                    disabled={loadingForm}
+                    onClick={() => onRemoveParticipant(item?.id, index)}>
                     <IconTrash size={20} />
                 </ActionIcon>
             </Group>
@@ -97,22 +106,25 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
 
     const createTemplate = async (values: typeof form.values) => {
         try {
+            setLoadingForm(true)
             const payload = newTemplateSchema.parse(values)
             const service = new TemplateService()
             const res = await service.post(payload)
-            const { data } = await res.json()
+            const { data, success } = await res.json()
             debugger
             const template = updateTemplateSchema.parse(data)
             updateTemplateToSelect({ label: template.name, value: template.templateId }, "ADD")
             form.setValues(template)
         } catch (error) {
-            // show error message
             console.error(error)
+        } finally {
+            setLoadingForm(false)
         }
     }
 
     const updateTemplate = async (values: typeof form.values, participantsIdsToDelete: string[]) => {
         try {
+            setLoadingForm(true)
             const template = updateTemplateSchema.parse(values)
             const payload = {
                 template,
@@ -120,13 +132,16 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
             }
             const service = new TemplateService()
             const res = await service.put(payload)
-            const { data } = await res.json()
+            const { data, success } = await res.json()
             const updatedTemplate = updateTemplateSchema.parse(data)
             form.setValues(updatedTemplate)
             updateTemplateToSelect({ label: updatedTemplate.name, value: updatedTemplate.templateId }, "UPDATE")
-            debugger
+            setParticipantsIdsToDelete([])
         } catch (error) {
+
             console.error(error)
+        } finally {
+            setLoadingForm(false)
         }
     }
 
@@ -135,6 +150,7 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
         fields,
         handleInsertListItem,
         handleSubmit,
-        templateName: templateNameRef.current
+        templateName: templateNameRef.current,
+        loading: loadingForm,
     }
 }

@@ -4,6 +4,7 @@ import { Flex, Title } from "@mantine/core";
 import Link from "next/link";
 import ParticipantList from "../components/participants/ParticipantList";
 import ErrorMessage from "../../components/ErrorMessage";
+import Countdown from "../components/Countdown";
 
 interface Params {
     id: string
@@ -28,12 +29,10 @@ const DynamicDashboardPage = async ({ params }: Props) => {
                 align="center"
                 direction="column"
             >
-                <p>dynamic</p>
+                <Countdown time={template?.Timebox?.time ?? 90} />
                 <Title>{template?.name}</Title>
                 <Link href=".">Go back</Link>
-                <code>{JSON.stringify(params, null, 2)}</code>
-                <code>{JSON.stringify(template, null, 2)}</code>
-                {/* <ParticipantList  participants={template?.Participant ?? []}/> */}
+                <ParticipantList participants={template?.Participant ?? []}/>
             </Flex>
         </>
 

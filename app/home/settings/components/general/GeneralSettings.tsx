@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Group, Select } from "@mantine/core"
+import { Box, Flex, Group, Select } from "@mantine/core"
 import TemplateForm from "./TemplateForm"
 import { useDisclosure } from '@mantine/hooks';
 import { Modal, Button } from '@mantine/core';
@@ -50,7 +50,7 @@ const GeneralSetting = ({ templates }: Props) => {
   const hasTemplateId = Boolean(form.values.templateId)
   const formTitle = hasTemplateId ? "Update Template" : "Create new Template"
   return (
-    <Box maw={500}>
+    <>
 
       <Modal opened={opened} onClose={close} title={formTitle}>
         <TemplateForm
@@ -59,31 +59,38 @@ const GeneralSetting = ({ templates }: Props) => {
           removeTemplate={removeTemplateFromSelect}
         />
       </Modal>
-      {
-        // TODO: handle edit template
-        hasContent &&
-        <form>
-          <Select
-            label="Current Template"
-            placeholder="Pick a template"
-            data={templatesData}
-            {...form.getInputProps("templateId")}
-          />
-
-        </form>
-      }
-      <Group>
+      <Flex
+        justify="center"
+        direction="column"
+        mt="md"
+      >
 
         {
-          hasTemplateId &&
-          <Button onClick={open}>Edit current template</Button>
+          // TODO: handle edit template
+          hasContent &&
+          <form>
+            <Select
+              label="Current Template"
+              placeholder="Pick a template"
+              data={templatesData}
+              {...form.getInputProps("templateId")}
+            />
+
+          </form>
         }
+      </Flex>
+      <Group mt="md">
         {
           canCreateTemplate &&
           <Button disabled={!canCreateTemplate} onClick={handleCreateTemplateClick}>Add new template</Button>
         }
+        {
+          hasTemplateId &&
+          <Button onClick={open}>Edit current template</Button>
+        }
       </Group>
-    </Box>
+    </>
+
   )
 }
 

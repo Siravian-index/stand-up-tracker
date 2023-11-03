@@ -5,9 +5,10 @@ import { TimerSettings, useTimer } from "react-timer-hook"
 
 interface Props {
   // settings: TimerSettings
+  time: number
 }
 
-const Countdown = ({ }: Props) => {
+const Countdown = ({ time }: Props) => {
 
   const generateTimer = (seconds = 90) => {
     const time = new Date();
@@ -15,17 +16,13 @@ const Countdown = ({ }: Props) => {
     return time
   }
   const {
-    totalSeconds,
     seconds,
     minutes,
-    hours,
-    days,
     isRunning,
     start,
     pause,
-    resume,
     restart,
-  } = useTimer({ expiryTimestamp: generateTimer(), autoStart: false })
+  } = useTimer({ expiryTimestamp: generateTimer(time), autoStart: false })
 
 
 
@@ -41,11 +38,11 @@ const Countdown = ({ }: Props) => {
     return isRunning ? pause : start
   }
 
-  const handleRestart = () => restart(generateTimer())
+  const handleRestart = () => restart(generateTimer(time))
   const text = isRunning ? "Pause" : "Start"
   return (
     <div style={{ textAlign: 'center' }}>
-      <div style={{ fontSize: '100px' }}>
+      <div style={{ fontSize: '6rem' }}>
         <span>{addPad(minutes)}</span>:<span>{addPad(seconds)}</span>
       </div>
       {/* <p>{isRunning ? 'Running' : 'Not running'}</p> */}

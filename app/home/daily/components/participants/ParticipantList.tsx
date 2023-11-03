@@ -1,17 +1,27 @@
 
-import { Flex, Title } from "@mantine/core"
+"use client"
+
+import { Box, Flex, Title } from "@mantine/core"
 import Participant from "./Participant"
 import { ParticipantType } from "@/schema/participant"
+import { useState } from "react"
 
 
 interface Props {
   participants: ParticipantType[]
 }
 
-const ParticipantList = ({ participants }: Props) => {
+const ParticipantList = ({ participants: list }: Props) => {
+  const [participants, setParticipants] = useState(list)
 
-
-
+  const updateParticipantCheck = (id: string, checked: boolean) => {
+    setParticipants((list) => list.map((participant) => {
+      if (participant.id === id) {
+        return { ...participant, hasParticipated: !participant.hasParticipated }
+      }
+      return participant
+    }))
+  }
   return (
     <>
       <Flex
@@ -25,18 +35,34 @@ const ParticipantList = ({ participants }: Props) => {
         <Title order={3}>Participants</Title>
 
 
-        <Title order={3}>Pending</Title>
+        <Flex
+          justify="space-around"
+          direction="row"
+          wrap="wrap"
+          gap="lg"
+        >
 
-        {participants.filter((p) => !p.hasParticipated).map((p) => {
+          <Flex
+            direction="column"
+            align="center"
+          >
+            <Title order={3}>Pending</Title>
+            {participants.filter((p) => !p.hasParticipated).map((p) => {
+              return <Participant key={p.id} participant={p} handleChange={updateParticipantCheck} />
+            })}
+          </Flex>
 
-          return <Participant key={p.id} participant={p} />
-        })}
+          <Flex
+            direction="column"
+            align="center"
+          >
+            <Title order={3}>Done talking</Title>
+            {participants.filter((p) => p.hasParticipated).map((p) => {
+              return <Participant key={p.id} participant={p} handleChange={updateParticipantCheck} />
+            })}
+          </Flex>
+        </Flex>
 
-        <Title order={3}>Already participated</Title>
-        {participants.filter((p) => p.hasParticipated).map((p) => {
-
-          return <Participant key={p.id} participant={p} />
-        })}
       </Flex>
     </>
   )
