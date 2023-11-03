@@ -68,10 +68,12 @@ export const useTemplateForm = ({ templateId, updateTemplateToSelect }: Props) =
         <Group key={item.id} mt="xs">
             <TextInput
                 label={`Participant ${index + 1}`}
+                description="Participant's name"
                 placeholder="Ana Maria"
                 style={{ flex: 1 }}
                 {...form.getInputProps(`participants.${index}.name`)}
                 disabled={loadingForm}
+                onBlur={() => form.validate()}
             />
             <Group mt="1.5rem">
                 <Switch

@@ -23,13 +23,17 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
         <Box maw={500} mx="auto">
           <Group mt="xs">
             <TextInput
-              label="Template Name"
+              label="Name"
+              description="Template's name."
               placeholder="Blue Team"
               withAsterisk
               {...form.getInputProps("name")}
               disabled={loading}
+              onBlur={() => form.validate()}
             />
             <NumberInput
+              allowDecimal={false}
+              allowNegative={false}
               label="Timer"
               placeholder="100"
               withAsterisk
@@ -38,6 +42,8 @@ export default function TemplateForm({ templateId, updateTemplateToSelect, remov
               onChange={(v) => {
                 form.setFieldValue("time", Number(v))
               }}
+              onBlur={() => form.validate()}
+              description="Time in seconds."
               disabled={loading}
             />
           </Group>

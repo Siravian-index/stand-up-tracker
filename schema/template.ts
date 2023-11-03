@@ -19,7 +19,7 @@ export const newTemplateSchema = templateSchema
     .omit({ id: true, settingsId: true, createdAt: true, updatedAt: true })
     .extend({
         participants: participantSchema.omit({ templateId: true }).partial({id: true}).array(),
-        time: z.number().min(10, { message: "Minimum 10 seconds" }).max(300, { message: "Maximum 300 seconds" }),
+        time: z.number().min(10, { message: "Minimum 10 seconds" }).max(900, { message: "Maximum 900 seconds" }),
     })
 
 
